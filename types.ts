@@ -20,6 +20,7 @@ export interface GalleryItem {
   id: string;
   type: 'image' | 'video';
   url: string;
+  thumbnail?: string; // Menyimpan preview gambar untuk video
   title: string;
   category: string;
 }
