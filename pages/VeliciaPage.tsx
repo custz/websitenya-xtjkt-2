@@ -11,7 +11,7 @@ const VeliciaPage: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'bot',
-      content: `Halo! Saya **Velicia**, asisten cerdas berbasis **Zent 2.5**. Kecepatan respons saya kini jauh lebih instan. Ada kendala jaringan yang bisa saya bantu?`,
+      content: `Halo! Saya **Velicia**, asisten cerdas berbasis **Gemini Flash Stable**. Koneksi saya sekarang lebih stabil dan cepat. Ada kendala jaringan atau tugas TJKT yang bisa saya bantu?`,
       timestamp: new Date(),
     }
   ]);
@@ -31,9 +31,10 @@ const VeliciaPage: React.FC = () => {
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
 
+    const userText = input.trim();
     const userMessage: Message = {
       role: 'user',
-      content: input,
+      content: userText,
       timestamp: new Date(),
     };
 
@@ -46,14 +47,23 @@ const VeliciaPage: React.FC = () => {
       parts: [{ text: msg.content }],
     }));
 
-    const botReply = await getVeliciaResponse(history, input);
-    
-    setMessages(prev => [...prev, {
-      role: 'bot',
-      content: botReply,
-      timestamp: new Date(),
-    }]);
-    setIsLoading(false);
+    try {
+      const botReply = await getVeliciaResponse(history, userText);
+      
+      setMessages(prev => [...prev, {
+        role: 'bot',
+        content: botReply,
+        timestamp: new Date(),
+      }]);
+    } catch (err) {
+      setMessages(prev => [...prev, {
+        role: 'bot',
+        content: "⚠️ Terjadi kesalahan sistem saat menghubungi Velicia.",
+        timestamp: new Date(),
+      }]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const clearChat = () => {
@@ -68,7 +78,7 @@ const VeliciaPage: React.FC = () => {
 
   return (
     <div className="h-screen flex flex-col md:flex-row bg-[#020617] overflow-hidden">
-      {/* Sidebar Info - Hidden on small mobile, drawer-like on desktop */}
+      {/* Sidebar Info */}
       <div className="hidden lg:flex w-80 xl:w-96 flex-col p-8 border-r border-slate-800 bg-slate-950/50 pt-24">
         <div className="mb-10">
           <div className="flex items-center gap-4 mb-8">
@@ -77,7 +87,7 @@ const VeliciaPage: React.FC = () => {
             </div>
             <div>
               <h1 className="text-2xl font-bold tracking-tight text-white">Velicia AI</h1>
-              <p className="text-blue-500 font-mono text-[10px] uppercase tracking-widest font-bold">Flash Edition 2.5</p>
+              <p className="text-blue-500 font-mono text-[10px] uppercase tracking-widest font-bold">Stable Edition</p>
             </div>
           </div>
           
@@ -86,15 +96,15 @@ const VeliciaPage: React.FC = () => {
               <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Status Node</h4>
               <div className="flex items-center gap-2 text-emerald-500 text-sm font-bold">
                 <div className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></div>
-                Online & Ready
+                Active (Gemini Flash)
               </div>
             </div>
             <div className="p-4 bg-slate-900/50 rounded-2xl border border-slate-800">
               <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Capabilities</h4>
               <ul className="text-slate-400 text-xs space-y-2">
-                <li className="flex items-center gap-2">• Network Troubleshooting</li>
-                <li className="flex items-center gap-2">• Fiber Optic Expertise</li>
-                <li className="flex items-center gap-2">• Linux SysAdmin Help</li>
+                <li className="flex items-center gap-2">• Cisco & Mikrotik Specialist</li>
+                <li className="flex items-center gap-2">• Network Protocol Guru</li>
+                <li className="flex items-center gap-2">• Linux Admin Expert</li>
               </ul>
             </div>
           </div>
@@ -117,7 +127,7 @@ const VeliciaPage: React.FC = () => {
             <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-600/20">
               <Cpu size={20} className="text-white" />
             </div>
-            <span className="font-bold text-sm">Velicia Flash 2.5</span>
+            <span className="font-bold text-sm">Velicia Flash Stable</span>
           </div>
           <button onClick={clearChat} className="p-2 text-slate-500 hover:text-white transition-colors">
             <RefreshCcw size={18} />
@@ -190,7 +200,7 @@ const VeliciaPage: React.FC = () => {
             </button>
           </div>
           <p className="text-center text-[9px] text-slate-600 uppercase tracking-[0.3em] mt-4 font-bold hidden md:block">
-            Zent 2.5 Flash Engine • v2.0-STABLE
+            Gemini Flash Stable Engine • v2.1
           </p>
         </div>
       </div>
