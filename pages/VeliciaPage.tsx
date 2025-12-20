@@ -11,7 +11,7 @@ const VeliciaPage: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'bot',
-      content: `Halo! Saya **Velicia**, asisten cerdas berbasis **Gemini 2.5 Flash**. Kecepatan respons saya kini jauh lebih instan. Ada kendala jaringan yang bisa saya bantu?`,
+      content: `Halo! Saya **Velicia**, asisten cerdas berbasis **Zent 2.5**. Kecepatan respons saya kini jauh lebih instan. Ada kendala jaringan yang bisa saya bantu?`,
       timestamp: new Date(),
     }
   ]);
@@ -190,7 +190,7 @@ const VeliciaPage: React.FC = () => {
             </button>
           </div>
           <p className="text-center text-[9px] text-slate-600 uppercase tracking-[0.3em] mt-4 font-bold hidden md:block">
-            Gemini 2.5 Flash Engine • v2.0-STABLE
+            Zent 2.5 Flash Engine • v2.0-STABLE
           </p>
         </div>
       </div>
