@@ -1,7 +1,7 @@
 
 import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Network, Pencil, Upload } from 'lucide-react';
+import { ArrowRight, Network, Pencil, Upload, ImageIcon } from 'lucide-react';
 import { useStore } from '../services/store';
 
 const Hero: React.FC = () => {
@@ -72,15 +72,14 @@ const Hero: React.FC = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 pt-4">
-            <Link to="/velicia" className="px-10 py-5 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3 transition-all transform hover:-translate-y-1 shadow-2xl shadow-blue-600/30">
-              Velicia AI <ArrowRight size={18} />
+            <Link to="/siswa" className="px-10 py-5 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3 transition-all transform hover:-translate-y-1 shadow-2xl shadow-blue-600/30">
+              Struktur Kelas <ArrowRight size={18} />
             </Link>
-            <Link to="/siswa" className="px-10 py-5 bg-slate-900/50 hover:bg-slate-800 text-white rounded-2xl font-black uppercase tracking-widest text-xs border border-white/5 transition-all text-center backdrop-blur-md">
-              Struktur Kelas
+            <Link to="/gallery" className="px-10 py-5 bg-slate-900/50 hover:bg-slate-800 text-white rounded-2xl font-black uppercase tracking-widest text-xs border border-white/5 transition-all flex items-center justify-center gap-3 backdrop-blur-md">
+              <ImageIcon size={18} /> Digital Archive
             </Link>
           </div>
           
-          {/* Responsive Stats */}
           <div className="grid grid-cols-3 gap-4 sm:gap-8 pt-6">
             {[
               { label: "Siswa", key: "students", val: data.stats.students },
@@ -104,7 +103,6 @@ const Hero: React.FC = () => {
           </div>
         </div>
 
-        {/* Visual Section */}
         <div className="relative group animate-in fade-in zoom-in-95 duration-1000">
           <div className="absolute -inset-4 bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-[3rem] blur-2xl opacity-50 group-hover:opacity-100 transition duration-1000"></div>
           <div className="relative bg-slate-900/50 border border-white/10 rounded-[2.5rem] overflow-hidden p-2 backdrop-blur-xl shadow-2xl">

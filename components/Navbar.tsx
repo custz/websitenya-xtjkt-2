@@ -1,7 +1,7 @@
 
 import React, { useRef, useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Home, Users, ImageIcon, Calendar, MessageSquare, Cpu, Settings, Eye, EyeOff, Download, Upload, RotateCcw, LogOut, Check, Save } from 'lucide-react';
+import { Home, Users, ImageIcon, Calendar, Cpu, Settings, Eye, EyeOff, Download, Upload, RotateCcw, LogOut, Check, Save } from 'lucide-react';
 import { useStore } from '../services/store';
 
 const Navbar: React.FC = () => {
@@ -14,7 +14,6 @@ const Navbar: React.FC = () => {
     { name: 'Siswa', path: '/siswa', icon: <Users size={20} /> },
     { name: 'Gallery', path: '/gallery', icon: <ImageIcon size={20} /> },
     { name: 'Jadwal', path: '/jadwal', icon: <Calendar size={20} /> },
-    { name: 'Velicia AI', path: '/velicia', icon: <MessageSquare size={20} /> },
   ];
 
   const isAdmin = userRole === 'admin';
@@ -86,7 +85,6 @@ const Navbar: React.FC = () => {
         </div>
 
         <div className="flex gap-2 pointer-events-auto items-center">
-          {/* Admin Tools Batch */}
           {isAdmin && (
             <div className="flex gap-2 items-center bg-slate-950/40 backdrop-blur-md border border-white/5 p-1 rounded-[1.5rem] shadow-xl">
               {isEditMode ? (
@@ -152,7 +150,6 @@ const Navbar: React.FC = () => {
         </div>
       </div>
 
-      {/* Floating Glassmorphism Navigation Dock */}
       {showNav && (
         <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 px-4 w-full max-w-fit animate-in slide-in-from-bottom-10 duration-500">
           <nav className="bg-slate-900/40 backdrop-blur-xl border border-white/10 rounded-3xl p-2 flex items-center gap-1 shadow-2xl shadow-black/50">
