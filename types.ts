@@ -1,6 +1,7 @@
 
 export type UserRole = 'user' | 'admin' | null;
 
+// Message interface for Velicia AI chat history
 export interface Message {
   role: 'user' | 'bot';
   content: string;
@@ -20,7 +21,7 @@ export interface GalleryItem {
   id: string;
   type: 'image' | 'video';
   url: string;
-  thumbnail?: string; // Menyimpan preview gambar untuk video
+  thumbnail?: string;
   title: string;
   category: string;
 }

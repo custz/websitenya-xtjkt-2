@@ -1,8 +1,6 @@
 
 {
-  "name": "TJKT Connect & Velicia AI (Flash Optimized)",
-  "description": "Website portofolio kelas Teknik Jaringan Komputer dan Telekomunikasi (TJKT) dengan asisten AI Gemini 2.5 Flash yang sangat cepat.",
-  "requestFramePermissions": [
-    "microphone"
-  ]
+  "name": "TJKT Connect",
+  "description": "Website portofolio kelas Teknik Jaringan Komputer dan Telekomunikasi (TJKT) modern dan responsif.",
+  "requestFramePermissions": []
 }

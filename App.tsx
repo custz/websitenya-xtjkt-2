@@ -7,7 +7,6 @@ import Home from './pages/Home';
 import StudentsPage from './pages/StudentsPage';
 import GalleryPage from './pages/GalleryPage';
 import SchedulePage from './pages/SchedulePage';
-import VeliciaPage from './pages/VeliciaPage';
 import LoginPage from './pages/LoginPage';
 
 const AppContent: React.FC = () => {
@@ -27,7 +26,6 @@ const AppContent: React.FC = () => {
             <Route path="/siswa" element={<StudentsPage />} />
             <Route path="/gallery" element={<GalleryPage />} />
             <Route path="/jadwal" element={<SchedulePage />} />
-            <Route path="/velicia" element={<VeliciaPage />} />
           </Routes>
         </main>
       </div>
