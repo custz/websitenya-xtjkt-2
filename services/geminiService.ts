@@ -30,7 +30,7 @@ export const getVeliciaResponse = async (chatHistory: { role: 'user' | 'model', 
   
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash-preview",
+      model: "gemini-2.5-flash",
       contents: [
         ...chatHistory,
         { role: 'user', parts: [{ text: userMessage }] }
