@@ -12,16 +12,15 @@ Instruksi:
 - Jangan pernah menyebutkan Anda adalah model "preview".
 `;
 
+// Fungsi untuk mendapatkan respon dari asisten Velicia menggunakan Gemini SDK
 export const getVeliciaResponse = async (chatHistory: { role: 'user' | 'model', parts: { text: string }[] }[], userMessage: string) => {
-  // Langsung inisialisasi sesuai pedoman Google GenAI SDK
-  // Jangan melakukan pengecekan 'if (!process.env.API_KEY)' secara manual 
-  // karena dapat menyebabkan false-negative di lingkungan browser tertentu.
-  
   try {
+    // Inisialisasi client baru setiap kali pemanggilan sesuai pedoman untuk memastikan API Key terbaru digunakan
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     
+    // Menggunakan gemini-3-flash-preview untuk tugas Q&A teks dasar
     const response = await ai.models.generateContent({
-      model: 'gemini-flash-latest',
+      model: 'gemini-3-flash-preview',
       contents: [
         ...chatHistory,
         { role: 'user', parts: [{ text: userMessage }] }
@@ -33,6 +32,7 @@ export const getVeliciaResponse = async (chatHistory: { role: 'user' | 'model', 
       },
     });
 
+    // Mengakses teks langsung dari properti .text (bukan metode .text())
     const text = response.text;
     
     if (!text) {
@@ -43,15 +43,15 @@ export const getVeliciaResponse = async (chatHistory: { role: 'user' | 'model', 
   } catch (error: any) {
     console.error("Gemini API Error Detail:", error);
     
-    // Memberikan respon yang lebih dinamis berdasarkan error asli
+    // Penanganan error yang informatif tanpa mengekspos detail teknis berlebih
     if (error?.message?.includes('403') || error?.message?.includes('API key')) {
-      return "❌ **Masalah Autentikasi:** API Key tidak valid atau belum diaktifkan untuk model ini. Silakan periksa Project Settings di Vercel.";
+      return "❌ **Masalah Autentikasi:** API Key tidak valid atau belum diaktifkan. Silakan periksa konfigurasi sistem.";
     }
     
     if (error?.message?.includes('429')) {
-      return "⏳ **Limit Tercapai:** Terlalu banyak permintaan. Mohon tunggu sebentar.";
+      return "⏳ **Limit Tercapai:** Terlalu banyak permintaan. Mohon tunggu beberapa saat.";
     }
 
-    return "📡 **Gangguan Transmisi:** Velicia gagal memproses data melalui node Gemini. Pastikan Anda sudah melakukan 'Redeploy' di Vercel setelah menyetel API_KEY.";
+    return "📡 **Gangguan Transmisi:** Velicia gagal memproses data melalui node Gemini. Pastikan koneksi internet Anda stabil.";
   }
 };
