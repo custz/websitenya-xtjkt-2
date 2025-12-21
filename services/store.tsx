@@ -41,7 +41,16 @@ const defaultData: SiteData = {
       { id: 's2', time: "08:30 - 10:00", subject: "Mata Pelajaran uknow", teacher: "Guru uknow", type: 'produktif' }
     ],
     "Selasa": [], "Rabu": [], "Kamis": [], "Jumat": []
-  }
+  },
+  featuresSubtitle: "Architecture & Foundation",
+  featuresTitle: "Building the Future",
+  features: [
+    { title: "Infrastructure", desc: "Arsitektur jaringan yang tangguh dan terukur untuk skala enterprise." },
+    { title: "Security", desc: "Protokol keamanan berlapis untuk menjaga integritas data digital." },
+    { title: "Connectivity", desc: "Menghubungkan simpul-simpul teknologi ke seluruh penjuru dunia." }
+  ],
+  quoteText: "Kabel mungkin menghubungkan perangkat, namun gairah untuk teknologi-lah yang menghubungkan Masa Depan. X-TJKT-2 bukan sekadar kelas, ia adalah keluarga digital.",
+  quoteAuthor: "Zent / Lead Node"
 };
 
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
@@ -49,7 +58,9 @@ const StoreContext = createContext<StoreContextType | undefined>(undefined);
 export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [data, setData] = useState<SiteData>(() => {
     const saved = localStorage.getItem('tjkt_v2_data');
-    return saved ? JSON.parse(saved) : defaultData;
+    const parsed = saved ? JSON.parse(saved) : defaultData;
+    // Merge logic to ensure new fields exist in old localStorage data
+    return { ...defaultData, ...parsed };
   });
   const [isEditMode, setEditMode] = useState(false);
   const [showNav, setShowNav] = useState(true);
@@ -70,7 +81,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, [userRole]);
 
   const updateData = (newData: Partial<SiteData>) => {
-    if (userRole !== 'admin') return; // Strict guard
+    if (userRole !== 'admin') return; 
     setData(prev => ({ ...prev, ...newData }));
   };
 
