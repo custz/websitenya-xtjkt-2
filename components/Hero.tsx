@@ -1,7 +1,7 @@
 
 import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Network, Pencil, Upload, ImageIcon } from 'lucide-react';
+import { ArrowRight, Network, Upload, ImageIcon, Zap } from 'lucide-react';
 import { useStore } from '../services/store';
 
 const Hero: React.FC = () => {
@@ -29,112 +29,104 @@ const Hero: React.FC = () => {
   };
 
   return (
-    <div className="relative min-h-screen flex items-center pt-24 pb-16 overflow-hidden bg-[#020617]">
-      {/* Dynamic Background */}
-      <div className="absolute top-0 -left-10 w-80 h-80 bg-blue-600 rounded-full mix-blend-multiply filter blur-[100px] opacity-10 animate-blob"></div>
-      <div className="absolute top-20 -right-10 w-80 h-80 bg-purple-600 rounded-full mix-blend-multiply filter blur-[100px] opacity-10 animate-blob animation-delay-2000"></div>
+    <div className="relative min-h-screen flex items-center pt-32 pb-24 overflow-hidden bg-[#05050a]">
+      {/* Aesthetic Background Orbs */}
+      <div className="absolute top-[10%] -left-[10%] w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px] animate-pulse"></div>
+      <div className="absolute bottom-[10%] -right-[10%] w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[120px] animate-pulse delay-700"></div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-600/10 border border-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-[0.3em]">
-            <Network size={14} />
-            <span>Angkatan 2024 • TJKT</span>
-          </div>
+      <div className="max-w-7xl mx-auto px-6 relative z-10 w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
           
-          <div className="space-y-4">
-            {isEditMode ? (
-              <div className="space-y-4">
-                <input 
-                  className="bg-slate-900/50 border border-blue-500/30 rounded-2xl px-5 py-3 w-full text-3xl sm:text-4xl font-black text-white focus:outline-none focus:ring-2 ring-blue-500/20"
+          <div className="lg:col-span-7 space-y-12">
+            <div className="inline-flex items-center gap-3 px-5 py-2 rounded-full glass-card border-white/10 text-blue-400 text-[10px] font-black uppercase tracking-[0.4em] animate-in fade-in duration-1000">
+              <Zap size={14} className="fill-blue-400" />
+              <span>System Node / X-TJKT-2</span>
+            </div>
+
+            <div className="relative">
+              {isEditMode ? (
+                <textarea 
+                  className="bg-transparent border-b border-white/10 text-5xl sm:text-7xl font-black text-white focus:outline-none w-full tracking-tighter"
                   value={data.heroTitle}
                   onChange={(e) => handleEdit('heroTitle', e.target.value)}
-                  placeholder="Judul Hero"
                 />
-                <textarea 
-                  className="bg-slate-900/50 border border-blue-500/30 rounded-2xl px-5 py-3 w-full text-slate-400 focus:outline-none h-24 text-sm sm:text-base"
-                  value={data.heroDescription}
-                  onChange={(e) => handleEdit('heroDescription', e.target.value)}
-                  placeholder="Deskripsi Hero"
-                />
-              </div>
-            ) : (
-              <>
-                <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black leading-[1.1] tracking-tight text-white">
-                  {data.heroTitle.split(' ').map((word, i) => 
-                    word.toLowerCase() === 'tjkt' || word === '2' ? <span key={i} className="text-blue-500 uppercase">{word} </span> : word + ' '
-                  )}
+              ) : (
+                <h1 className="text-6xl sm:text-8xl lg:text-9xl font-black leading-[0.85] tracking-tighter text-white animate-in slide-in-from-left-12 duration-1000">
+                  {data.heroTitle.split(' ').map((word, i) => (
+                    <span key={i} className="block group cursor-default">
+                      {i === 1 ? (
+                        <span className="text-stroke-blue group-hover:text-blue-500 transition-all duration-700">{word} </span>
+                      ) : word + ' '}
+                    </span>
+                  ))}
                 </h1>
-                <p className="text-base sm:text-lg text-slate-400 max-w-lg leading-relaxed font-medium">
-                  {data.heroDescription}
-                </p>
-              </>
-            )}
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-4 pt-4">
-            <Link to="/siswa" className="px-10 py-5 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3 transition-all transform hover:-translate-y-1 shadow-2xl shadow-blue-600/30">
-              Struktur Kelas <ArrowRight size={18} />
-            </Link>
-            <Link to="/gallery" className="px-10 py-5 bg-slate-900/50 hover:bg-slate-800 text-white rounded-2xl font-black uppercase tracking-widest text-xs border border-white/5 transition-all flex items-center justify-center gap-3 backdrop-blur-md">
-              <ImageIcon size={18} /> Digital Archive
-            </Link>
-          </div>
-          
-          <div className="grid grid-cols-3 gap-4 sm:gap-8 pt-6">
-            {[
-              { label: "Siswa", key: "students", val: data.stats.students },
-              { label: "Mapel", key: "subjects", val: data.stats.subjects },
-              { label: "Uptime", key: "uptime", val: data.stats.uptime },
-            ].map((stat) => (
-              <div key={stat.key} className="relative group">
-                <div className="absolute inset-0 bg-blue-600/5 blur-xl group-hover:bg-blue-600/10 transition-all rounded-full"></div>
-                {isEditMode ? (
-                  <input 
-                    className="relative bg-slate-900/50 border border-white/5 rounded-xl w-full text-xl sm:text-2xl font-black text-white p-2 text-center focus:outline-none focus:border-blue-500"
-                    value={stat.val}
-                    onChange={(e) => handleEdit(`stats.${stat.key}`, e.target.value)}
-                  />
-                ) : (
-                  <h3 className="relative text-2xl sm:text-4xl font-black text-white tracking-tighter">{stat.val}</h3>
-                )}
-                <p className="relative text-[9px] sm:text-[10px] text-slate-500 font-black uppercase tracking-[0.2em] mt-1">{stat.label}</p>
+              )}
+              <div className="absolute -top-10 -right-10 text-stroke text-8xl font-black opacity-10 select-none pointer-events-none hidden lg:block uppercase">
+                Elite
               </div>
-            ))}
-          </div>
-        </div>
+            </div>
 
-        <div className="relative group animate-in fade-in zoom-in-95 duration-1000">
-          <div className="absolute -inset-4 bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-[3rem] blur-2xl opacity-50 group-hover:opacity-100 transition duration-1000"></div>
-          <div className="relative bg-slate-900/50 border border-white/10 rounded-[2.5rem] overflow-hidden p-2 backdrop-blur-xl shadow-2xl">
-            <img 
-              src={data.heroImage} 
-              alt="Class" 
-              className="rounded-[2rem] w-full h-[300px] sm:h-[450px] lg:h-[550px] object-cover grayscale opacity-80 hover:grayscale-0 hover:opacity-100 transition-all duration-700"
-            />
-            {isEditMode && (
-              <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center p-8 text-center animate-in fade-in">
-                <button 
-                  onClick={() => fileInputRef.current?.click()}
-                  className="p-5 bg-blue-600 text-white rounded-full mb-4 shadow-2xl hover:scale-110 active:scale-95 transition-transform"
-                >
-                  <Upload size={28} />
-                </button>
-                <p className="text-sm font-black text-white uppercase tracking-widest">Unggah Hero Banner</p>
-                <input 
-                  type="file"
-                  ref={fileInputRef}
-                  className="hidden"
-                  accept="image/*"
-                  onChange={handleFileUpload}
+            <p className="text-xl text-slate-400 max-w-lg leading-relaxed font-light italic border-l-2 border-blue-500/30 pl-8 animate-in fade-in delay-500 duration-1000">
+              {data.heroDescription}
+            </p>
+
+            <div className="flex flex-wrap gap-6 pt-4 animate-in fade-in delay-700 duration-1000">
+              <Link to="/siswa" className="group relative px-12 py-6 bg-white text-black rounded-full font-black uppercase tracking-[0.2em] text-[10px] overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-2xl shadow-white/10">
+                <span className="relative z-10 flex items-center gap-3">Explore Hierarchy <ArrowRight size={16} /></span>
+                <div className="absolute inset-0 bg-blue-500 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
+              </Link>
+              <Link to="/gallery" className="px-12 py-6 glass-card hover:bg-white/5 text-white rounded-full font-black uppercase tracking-[0.2em] text-[10px] border border-white/10 transition-all flex items-center gap-3">
+                <ImageIcon size={16} /> Visual Archive
+              </Link>
+            </div>
+          </div>
+
+          <div className="lg:col-span-5 relative animate-aesthetic-float">
+            <div className="relative z-10 p-3 glass-card rounded-[3rem] shadow-2xl glow-blue group">
+              <div className="relative overflow-hidden rounded-[2.5rem] aspect-[4/5]">
+                <img 
+                  src={data.heroImage} 
+                  alt="Aesthetic Class" 
+                  className="w-full h-full object-cover grayscale brightness-75 group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000"
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#05050a] via-transparent to-transparent opacity-60"></div>
+                
+                {isEditMode && (
+                  <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center p-8 text-center backdrop-blur-md">
+                    <button onClick={() => fileInputRef.current?.click()} className="p-6 bg-white text-black rounded-full mb-4 shadow-2xl">
+                      <Upload size={32} />
+                    </button>
+                    <p className="text-[10px] font-black text-white uppercase tracking-widest">Update Visual Node</p>
+                    <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileUpload} />
+                  </div>
+                )}
               </div>
-            )}
-            <div className="absolute bottom-8 left-8 flex gap-3">
-              <div className="px-4 py-2 bg-black/60 backdrop-blur-md rounded-2xl text-[10px] font-black border border-white/10 uppercase tracking-widest text-white/80">
-                {data.brandName} • SECURE NODE
+              
+              {/* Floating Decorative Elements */}
+              <div className="absolute -bottom-8 -left-8 glass-card px-8 py-6 rounded-3xl border-white/10 shadow-2xl animate-in slide-in-from-bottom-8 duration-1000 delay-1000">
+                <div className="mono text-[10px] text-blue-500 font-bold mb-1 tracking-widest uppercase">Protocol_Active</div>
+                <div className="text-2xl font-black text-white tracking-tighter uppercase">X-TJKT-2</div>
               </div>
             </div>
           </div>
+
+        </div>
+
+        {/* Stats Section Integrated into Hero Bottom */}
+        <div className="mt-32 grid grid-cols-2 md:grid-cols-4 gap-8 border-t border-white/5 pt-16">
+          {[
+            { label: "Active Nodes", val: data.stats.students, suffix: "Siswa" },
+            { label: "Core Subjects", val: data.stats.subjects, suffix: "Mapel" },
+            { label: "Network Health", val: data.stats.uptime, suffix: "Online" },
+            { label: "System Version", val: "2.4.0", suffix: "Stable" },
+          ].map((stat, i) => (
+            <div key={i} className="group">
+              <div className="text-stroke-blue text-4xl font-black mb-1 group-hover:text-blue-500 transition-colors duration-500">
+                {stat.val}
+              </div>
+              <div className="mono text-[9px] text-slate-500 font-bold uppercase tracking-[0.3em]">{stat.label}</div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
