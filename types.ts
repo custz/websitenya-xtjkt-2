@@ -34,6 +34,11 @@ export interface Lesson {
   type: 'umum' | 'produktif';
 }
 
+export interface Feature {
+  title: string;
+  desc: string;
+}
+
 export interface SiteData {
   brandName: string;
   heroTitle: string;
@@ -47,4 +52,10 @@ export interface SiteData {
   students: Student[];
   gallery: GalleryItem[];
   schedule: { [key: string]: Lesson[] };
+  // New Editable Fields
+  featuresSubtitle: string;
+  featuresTitle: string;
+  features: Feature[];
+  quoteText: string;
+  quoteAuthor: string;
 }
