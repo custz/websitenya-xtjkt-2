@@ -1,6 +1,6 @@
 
 import React, { useState, useRef } from 'react';
-import { Users, User, Shield, BookOpen, Wallet, Plus, Trash2, Camera, X, Upload } from 'lucide-react';
+import { Shield, BookOpen, Wallet, Plus, Trash2, Camera, X, Upload, Terminal, Cpu, Zap, Fingerprint, Info } from 'lucide-react';
 import { useStore } from '../services/store';
 import { Student } from '../types';
 
@@ -14,22 +14,38 @@ const StudentsPage: React.FC = () => {
   const editFileInputRef = useRef<HTMLInputElement>(null);
   const [editingStudentId, setEditingStudentId] = useState<string | null>(null);
 
-  const getIcon = (role: string) => {
-    if (role.toLowerCase().includes('ketua')) return <Shield size={40} />;
-    if (role.toLowerCase().includes('sekretaris')) return <BookOpen size={40} />;
-    if (role.toLowerCase().includes('bendahara')) return <Wallet size={40} />;
-    return <User size={40} />;
+  const BIO_LIMIT = 150;
+
+  const getRoleIcon = (role: string) => {
+    const r = role.toLowerCase();
+    if (r.includes('ketua')) return <Shield size={14} />;
+    if (r.includes('sekretaris')) return <BookOpen size={14} />;
+    if (r.includes('bendahara')) return <Wallet size={14} />;
+    return <Fingerprint size={14} />;
   };
 
   const removeStudent = (id: string) => {
-    if(window.confirm("Hapus data siswa ini?")) {
+    if(window.confirm("Permanently disconnect this node from the directory?")) {
       updateData({ students: data.students.filter(s => s.id !== id) });
     }
   };
 
   const addStudent = () => {
-    if (!newStudent.name) return;
-    const s = { ...newStudent, id: Date.now().toString() };
+    const { name, role, bio } = newStudent;
+    
+    // Stricter Validation
+    if (!name.trim()) return alert("Identify node: Name is required.");
+    if (!role.trim()) return alert("Identify node: Role is required.");
+    if (!bio.trim()) return alert("Identify node: Core directive (Bio) is required.");
+    
+    const s = { 
+      ...newStudent, 
+      id: Date.now().toString(),
+      name: name.trim(),
+      role: role.trim(),
+      bio: bio.trim().slice(0, BIO_LIMIT)
+    };
+    
     updateData({ students: [...data.students, s] });
     setIsAdding(false);
     setNewStudent({ id: '', name: '', role: '', bio: '', color: 'from-blue-600 to-indigo-700', image: '' });
@@ -47,184 +63,252 @@ const StudentsPage: React.FC = () => {
       const reader = new FileReader();
       reader.onloadend = () => {
         const base64 = reader.result as string;
-        if (isNew) {
-          setNewStudent(prev => ({ ...prev, image: base64 }));
-        } else if (id) {
-          updateStudent(id, { image: base64 });
-        }
+        if (isNew) setNewStudent(prev => ({ ...prev, image: base64 }));
+        else if (id) updateStudent(id, { image: base64 });
       };
       reader.readAsDataURL(file);
     }
   };
 
   return (
-    <div className="min-h-screen pt-24 md:pt-32 pb-40 px-4 md:px-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16 md:mb-20">
-          <div className="inline-flex p-4 rounded-3xl bg-blue-600/10 mb-6 border border-blue-500/10">
-            <Users className="text-blue-500" size={32} />
-          </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">Struktur Kelas</h1>
-          <p className="text-slate-400 max-w-2xl mx-auto text-base md:text-lg">
-            Anggota inti penggerak ekosistem digital <span className="text-blue-400 font-bold italic">{data.brandName}</span>.
-          </p>
-          
-          {isEditMode && (
-            <button 
-              onClick={() => setIsAdding(true)}
-              className="mt-8 flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-500 transition-all mx-auto shadow-xl shadow-blue-600/30 text-sm uppercase tracking-widest"
-            >
-              <Plus size={20} /> Tambah Anggota
-            </button>
-          )}
+    <div className="min-h-screen pt-40 pb-64 px-6 md:px-12 bg-[#05050a] relative">
+      {/* Decorative Background Elements */}
+      <div className="fixed top-0 left-0 w-full h-full pointer-events-none opacity-20 overflow-hidden">
+        <div className="absolute top-1/4 -right-20 text-[20rem] font-black text-stroke uppercase rotate-90 leading-none">
+          Network
         </div>
+        <div className="absolute bottom-0 -left-20 text-[20rem] font-black text-stroke uppercase -rotate-90 leading-none">
+          Elite
+        </div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.1),transparent_50%)]"></div>
+      </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
-          {data.students.map((person) => (
-            <div key={person.id} className="group relative">
-              <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600/30 to-indigo-600/30 opacity-0 group-hover:opacity-100 transition duration-500 blur-xl rounded-[2rem] z-0"></div>
-              <div className="relative bg-slate-900/60 border border-white/5 rounded-[2rem] p-8 md:p-10 flex flex-col items-center text-center z-10 backdrop-blur-xl h-full shadow-2xl">
+      <div className="max-w-7xl mx-auto relative z-10">
+        <header className="mb-40">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-12 border-b border-white/5 pb-16">
+            <div className="space-y-6">
+              <div className="flex items-center gap-3 text-blue-500 animate-pulse">
+                <Terminal size={18} />
+                <span className="mono text-[10px] font-black uppercase tracking-[0.6em]">Directory.Manifest / v2.5</span>
+              </div>
+              <h1 className="text-7xl md:text-9xl font-black text-white tracking-tighter leading-[0.8]">
+                ELITE<br /><span className="text-stroke-blue">NODES</span>
+              </h1>
+            </div>
+            
+            <div className="max-w-sm space-y-8">
+              <p className="text-slate-400 font-medium italic leading-relaxed text-lg border-l-2 border-blue-500/50 pl-6">
+                "Arsitektur manusia di balik infrastruktur digital kelas X TJKT 2."
+              </p>
+              {isEditMode && (
+                <button 
+                  onClick={() => setIsAdding(true)}
+                  className="group relative px-10 py-5 bg-white text-black rounded-full font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-all shadow-2xl shadow-white/5 active:scale-95"
+                >
+                  <span className="flex items-center gap-3"><Plus size={16} /> Register Member</span>
+                </button>
+              )}
+            </div>
+          </div>
+        </header>
+
+        {/* Editorial Masonry Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-32 gap-x-12">
+          {data.students.map((person, index) => (
+            <div 
+              key={person.id} 
+              className={`relative flex flex-col group transition-all duration-500 hover:scale-[1.02] ${index % 2 === 1 ? 'md:mt-24' : ''}`}
+            >
+              {/* Massive Number Label */}
+              <div className="absolute -top-12 -left-8 text-7xl font-black text-white/5 select-none mono italic group-hover:text-blue-500/10 transition-colors duration-700">
+                0{index + 1}
+              </div>
+
+              {/* Photo Section */}
+              <div className="relative aspect-[3/4] rounded-[2rem] overflow-hidden glass-card p-2 group-hover:glow-blue transition-all duration-700">
+                {person.image ? (
+                  <img src={person.image} className="w-full h-full object-cover rounded-[1.8rem] grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-105" />
+                ) : (
+                  <div className={`w-full h-full rounded-[1.8rem] flex items-center justify-center bg-gradient-to-br ${person.color}`}>
+                    <Cpu size={80} className="text-white/20" />
+                  </div>
+                )}
                 
                 {isEditMode && (
-                  <button 
-                    onClick={() => removeStudent(person.id)}
-                    className="absolute top-6 right-6 p-2 bg-red-600/10 text-red-500 rounded-xl hover:bg-red-600 hover:text-white transition-all z-20"
-                  >
-                    <Trash2 size={18} />
-                  </button>
+                  <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button 
+                      onClick={() => {
+                        setEditingStudentId(person.id);
+                        editFileInputRef.current?.click();
+                      }}
+                      className="p-5 bg-white text-black rounded-full shadow-2xl transform transition-transform hover:scale-110 active:scale-90"
+                    >
+                      <Camera size={24} />
+                    </button>
+                  </div>
                 )}
 
-                <div className={`w-24 h-24 md:w-32 md:h-32 rounded-[2rem] bg-gradient-to-br ${person.color} flex items-center justify-center text-white mb-6 md:mb-8 shadow-2xl overflow-hidden relative group-hover:-translate-y-2 transition-transform duration-500`}>
-                  {person.image ? (
-                    <img src={person.image} className="w-full h-full object-cover" />
-                  ) : (
-                    getIcon(person.role)
-                  )}
-                  {isEditMode && (
-                    <div className="absolute inset-0 bg-black/70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button 
-                        onClick={() => {
-                          setEditingStudentId(person.id);
-                          editFileInputRef.current?.click();
-                        }}
-                        className="p-3 bg-blue-600 rounded-2xl text-white shadow-lg"
-                      >
-                        <Camera size={20} />
-                      </button>
-                    </div>
-                  )}
+                {/* Aesthetic Tags on Photo */}
+                <div className="absolute top-6 left-6 flex gap-2">
+                  <div className="px-3 py-1 glass-card border-white/10 rounded-full text-[8px] font-black uppercase tracking-widest text-white backdrop-blur-md">
+                    AUTH_NODE
+                  </div>
+                </div>
+              </div>
+
+              {/* Content Section */}
+              <div className="mt-10 space-y-6 px-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-8 h-[1px] bg-blue-500/30"></div>
+                  <div className="flex items-center gap-2 text-blue-500">
+                    {getRoleIcon(person.role)}
+                    <span className="mono text-[9px] font-black uppercase tracking-[0.4em]">{person.role}</span>
+                  </div>
                 </div>
 
-                {isEditMode ? (
-                  <div className="w-full space-y-3">
-                    <input 
-                      className="bg-slate-800/50 border border-white/5 rounded-xl px-4 py-2 w-full text-[10px] text-blue-400 font-mono text-center uppercase tracking-[0.2em] font-bold"
-                      value={person.role}
-                      placeholder="Jabatan"
-                      onChange={(e) => updateStudent(person.id, { role: e.target.value })}
-                    />
-                    <input 
-                      className="bg-slate-800/50 border border-white/5 rounded-xl px-4 py-2 w-full text-lg md:text-xl font-bold text-white text-center"
-                      value={person.name}
-                      placeholder="Nama Lengkap"
-                      onChange={(e) => updateStudent(person.id, { name: e.target.value })}
-                    />
-                    <textarea 
-                      className="bg-slate-800/50 border border-white/5 rounded-xl px-4 py-2 w-full text-xs md:text-sm text-slate-400 text-center h-20 resize-none"
-                      value={person.bio}
-                      placeholder="Bio Singkat..."
-                      onChange={(e) => updateStudent(person.id, { bio: e.target.value })}
-                    />
-                  </div>
-                ) : (
-                  <>
-                    <h4 className="text-blue-500 font-mono text-[10px] uppercase tracking-[0.4em] mb-3 font-bold">{person.role}</h4>
-                    <h3 className="text-2xl md:text-3xl font-bold text-white mb-4 md:mb-6 tracking-tight">{person.name}</h3>
-                    <p className="text-slate-400 text-xs md:text-sm leading-relaxed mb-8 px-2">{person.bio}</p>
-                  </>
-                )}
-                
-                <div className="mt-auto w-full flex justify-center pt-6 border-t border-white/5">
-                  <div className="px-4 py-1.5 bg-slate-800/80 rounded-full flex items-center gap-2">
-                     <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></div>
-                     <span className="text-[10px] uppercase font-bold text-slate-500 tracking-widest">Profile Verified</span>
-                  </div>
+                <div className="space-y-2">
+                   {isEditMode ? (
+                     <div className="space-y-4">
+                        <input 
+                          className="w-full bg-transparent border-b border-white/10 text-4xl font-black text-white focus:outline-none focus:border-blue-500 tracking-tighter uppercase"
+                          value={person.name}
+                          onChange={(e) => updateStudent(person.id, { name: e.target.value })}
+                          placeholder="Node Name"
+                        />
+                        <div className="relative">
+                          <textarea 
+                            className="w-full bg-slate-900/50 rounded-2xl p-4 text-slate-400 text-xs italic focus:outline-none border border-white/5 resize-none h-24"
+                            value={person.bio}
+                            maxLength={BIO_LIMIT}
+                            onChange={(e) => updateStudent(person.id, { bio: e.target.value })}
+                            placeholder="Directive info..."
+                          />
+                          <div className={`absolute bottom-2 right-4 mono text-[8px] font-bold ${person.bio.length >= BIO_LIMIT ? 'text-red-500' : 'text-slate-600'}`}>
+                            {BIO_LIMIT - person.bio.length} chars left
+                          </div>
+                        </div>
+                        <button onClick={() => removeStudent(person.id)} className="text-red-500 text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:text-red-400 transition-colors">
+                          <Trash2 size={12} /> Disconnect Permanently
+                        </button>
+                     </div>
+                   ) : (
+                    <>
+                      <h2 className="text-5xl font-black text-white leading-none tracking-tighter group-hover:text-blue-500 transition-colors duration-500 cursor-default">
+                        {person.name}
+                      </h2>
+                      <p className="text-slate-500 text-sm font-medium leading-relaxed italic max-w-xs pt-2 line-clamp-3">
+                        "{person.bio}"
+                      </p>
+                    </>
+                   )}
+                </div>
+
+                {/* Technical Footnote */}
+                <div className="pt-6 flex justify-between items-center border-t border-white/5">
+                   <div className="flex gap-4">
+                      <Zap size={14} className="text-blue-500/50" />
+                      <span className="mono text-[8px] text-slate-600 font-bold uppercase tracking-widest">Pings: Healthy</span>
+                   </div>
+                   <div className="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.8)] animate-pulse"></div>
                 </div>
               </div>
             </div>
           ))}
         </div>
 
-        <input 
-          type="file"
-          ref={editFileInputRef}
-          className="hidden"
-          accept="image/*"
-          onChange={(e) => handleFileChange(e, false, editingStudentId || undefined)}
-        />
-
-        {/* Add Student Modal */}
+        {/* Add Modal Aesthetic */}
         {isAdding && (
-          <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md overflow-y-auto">
-            <div className="bg-slate-900 border border-white/10 p-6 md:p-8 rounded-[2.5rem] w-full max-w-md shadow-2xl my-auto animate-in zoom-in-95 duration-200">
-              <div className="flex justify-between items-center mb-6">
-                <h3 className="text-xl md:text-2xl font-bold">Tambah Anggota</h3>
-                <button onClick={() => setIsAdding(false)} className="p-2 hover:bg-slate-800 rounded-xl transition-all">
-                  <X size={20} />
-                </button>
-              </div>
-              <div className="space-y-4">
-                <div className="flex flex-col items-center mb-4">
-                  <div className="w-24 h-24 rounded-[1.5rem] bg-slate-800 flex items-center justify-center border-2 border-dashed border-slate-700 overflow-hidden relative group">
-                    {newStudent.image ? (
-                      <img src={newStudent.image} className="w-full h-full object-cover" />
-                    ) : (
-                      <User className="text-slate-600" size={32} />
-                    )}
-                    <button 
-                      onClick={() => fileInputRef.current?.click()}
-                      className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity"
-                    >
-                      <Upload className="text-white" size={20} />
-                    </button>
+          <div className="fixed inset-0 z-[200] bg-slate-950/98 backdrop-blur-2xl flex items-center justify-center p-6 animate-in fade-in duration-500">
+            <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-20">
+              <div className="space-y-12">
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3 text-blue-500">
+                    <Zap size={20} />
+                    <span className="mono text-[10px] font-black uppercase tracking-[0.5em]">Initialization.Sequence</span>
                   </div>
-                  <input 
-                    type="file"
-                    ref={fileInputRef}
-                    className="hidden"
-                    accept="image/*"
-                    onChange={(e) => handleFileChange(e, true)}
-                  />
+                  <h3 className="text-6xl font-black text-white tracking-tighter uppercase leading-[0.9]">New Node<br /><span className="text-stroke-blue">Registry</span></h3>
                 </div>
 
-                <input 
-                  className="bg-slate-800 border border-white/5 rounded-xl px-4 py-3 w-full text-white text-sm placeholder:text-slate-500"
-                  placeholder="Nama Lengkap"
-                  value={newStudent.name}
-                  onChange={e => setNewStudent({...newStudent, name: e.target.value})}
-                />
-                <input 
-                  className="bg-slate-800 border border-white/5 rounded-xl px-4 py-3 w-full text-white text-sm placeholder:text-slate-500"
-                  placeholder="Jabatan (Ketua, Sekretaris, dll)"
-                  value={newStudent.role}
-                  onChange={e => setNewStudent({...newStudent, role: e.target.value})}
-                />
-                <textarea 
-                  className="bg-slate-800 border border-white/5 rounded-xl px-4 py-3 w-full text-white text-sm placeholder:text-slate-500 h-24 resize-none"
-                  placeholder="Bio Singkat..."
-                  value={newStudent.bio}
-                  onChange={e => setNewStudent({...newStudent, bio: e.target.value})}
-                />
-                <button 
-                  onClick={addStudent}
-                  className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl font-bold transition-all shadow-lg uppercase text-xs tracking-widest"
-                >
-                  Simpan Data Anggota
-                </button>
+                <div className="relative aspect-square glass-card rounded-[3rem] p-4 flex flex-col items-center justify-center overflow-hidden group">
+                  {newStudent.image ? (
+                    <img src={newStudent.image} className="w-full h-full object-cover rounded-[2.5rem]" />
+                  ) : (
+                    <div className="flex flex-col items-center gap-4 text-slate-700">
+                       <Upload size={48} className="group-hover:text-blue-500 transition-colors" />
+                       <span className="mono text-[10px] font-bold uppercase tracking-widest">Upload Interface</span>
+                    </div>
+                  )}
+                  <button 
+                    onClick={() => fileInputRef.current?.click()}
+                    className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all backdrop-blur-sm"
+                  >
+                    <Camera size={40} className="text-white" />
+                  </button>
+                  <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={(e) => handleFileChange(e, true)} />
+                </div>
+              </div>
+
+              <div className="flex flex-col justify-center space-y-10">
+                <div className="space-y-8">
+                   <div className="space-y-2">
+                      <label className="mono text-[9px] text-blue-500 font-black uppercase tracking-widest flex items-center gap-2">
+                        <Terminal size={10} /> Full Name / Alias
+                      </label>
+                      <input 
+                        className="w-full bg-transparent border-b-2 border-white/10 py-4 text-3xl font-black text-white focus:outline-none focus:border-blue-600 transition-all uppercase placeholder:text-white/5"
+                        placeholder="IDENTIFY_NAME"
+                        value={newStudent.name}
+                        onChange={e => setNewStudent({...newStudent, name: e.target.value})}
+                      />
+                   </div>
+                   <div className="space-y-2">
+                      <label className="mono text-[9px] text-blue-500 font-black uppercase tracking-widest flex items-center gap-2">
+                        <Cpu size={10} /> System Protocol (Role)
+                      </label>
+                      <input 
+                        className="w-full bg-transparent border-b-2 border-white/10 py-4 text-xl font-bold text-white focus:outline-none focus:border-blue-600 transition-all uppercase placeholder:text-white/5"
+                        placeholder="ASSIGN_ROLE"
+                        value={newStudent.role}
+                        onChange={e => setNewStudent({...newStudent, role: e.target.value})}
+                      />
+                   </div>
+                   <div className="space-y-2 relative">
+                      <label className="mono text-[9px] text-blue-500 font-black uppercase tracking-widest flex items-center gap-2">
+                        <Info size={10} /> Core Directive (Bio)
+                      </label>
+                      <textarea 
+                        className="w-full bg-white/5 rounded-3xl p-6 text-white focus:outline-none focus:ring-1 ring-blue-600 h-32 text-sm placeholder:text-white/5 resize-none"
+                        placeholder="Define mission objectives..."
+                        maxLength={BIO_LIMIT}
+                        value={newStudent.bio}
+                        onChange={e => setNewStudent({...newStudent, bio: e.target.value})}
+                      />
+                      <div className={`absolute bottom-4 right-6 mono text-[8px] font-bold ${newStudent.bio.length >= BIO_LIMIT ? 'text-red-500' : 'text-slate-600'}`}>
+                        {BIO_LIMIT - newStudent.bio.length} characters remaining
+                      </div>
+                   </div>
+                </div>
+
+                <div className="flex gap-6">
+                  <button 
+                    onClick={addStudent} 
+                    className="flex-1 py-6 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-black uppercase text-[10px] tracking-[0.3em] shadow-2xl shadow-blue-600/20 transition-all active:scale-95"
+                  >
+                    Connect Node
+                  </button>
+                  <button 
+                    onClick={() => setIsAdding(false)} 
+                    className="px-8 py-6 glass-card rounded-full text-white font-black uppercase text-[10px] tracking-widest border border-white/10 hover:bg-white/5 transition-colors"
+                  >
+                    Abort
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         )}
+
+        <input type="file" ref={editFileInputRef} className="hidden" accept="image/*" onChange={(e) => handleFileChange(e, false, editingStudentId || undefined)} />
       </div>
     </div>
   );
