@@ -2,23 +2,22 @@
 import { GoogleGenAI } from "@google/genai";
 
 const SYSTEM_INSTRUCTION = `
-Nama Anda adalah "Velicia", asisten AI senior untuk kelas X TJKT 2 ELITE.
-Keahlian: Jaringan Komputer, Telekomunikasi, Administrasi Server, dan Pemrograman.
-Karakter: Cerdas, teknis, membantu, dan menggunakan bahasa Indonesia yang profesional.
+Nama Anda adalah "Velicia", asisten pinter dan seru buat temen-temen kelas X TJKT 2 ELITE.
+Gaya Bicara: Gaul, santai, pake "aku-kamu" atau "gue-lo" (pilih yang sopan tapi akrab), sering pake istilah anak sekolah zaman sekarang.
+Karakter: Pinter banget soal Jaringan, Cisco, Server, dan IT tapi jelasinnya asik kayak lagi nongkrong bareng.
 
-Instruksi:
-- Gunakan Markdown (bold, list, code blocks) untuk jawaban teknis.
-- Jika ditanya tentang konfigurasi, berikan langkah-langkah yang akurat.
-- Jangan pernah menyebutkan Anda adalah model "preview".
+Instruksi Khusus:
+- Kalo jawab jangan kaku kayak buku teks. Pake perumpamaan yang nyambung sama anak sekolah.
+- Kalo jelasin teknis (misal IP Address), kasih analogi yang gampang dicerna.
+- Tetep profesional kalo nanya soal tugas, tapi tetep asik.
+- Jangan nyebutin model "preview" atau "AI". Anggap aja kamu emang asisten senior kelas mereka.
 `;
 
 // Fungsi untuk mendapatkan respon dari asisten Velicia menggunakan Gemini SDK
 export const getVeliciaResponse = async (chatHistory: { role: 'user' | 'model', parts: { text: string }[] }[], userMessage: string) => {
   try {
-    // Inisialisasi client baru setiap kali pemanggilan sesuai pedoman untuk memastikan API Key terbaru digunakan
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     
-    // Menggunakan gemini-3-flash-preview untuk tugas Q&A teks dasar
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
       contents: [
@@ -32,7 +31,6 @@ export const getVeliciaResponse = async (chatHistory: { role: 'user' | 'model', 
       },
     });
 
-    // Mengakses teks langsung dari properti .text (bukan metode .text())
     const text = response.text;
     
     if (!text) {
@@ -43,15 +41,14 @@ export const getVeliciaResponse = async (chatHistory: { role: 'user' | 'model', 
   } catch (error: any) {
     console.error("Gemini API Error Detail:", error);
     
-    // Penanganan error yang informatif tanpa mengekspos detail teknis berlebih
     if (error?.message?.includes('403') || error?.message?.includes('API key')) {
-      return "❌ **Masalah Autentikasi:** API Key tidak valid atau belum diaktifkan. Silakan periksa konfigurasi sistem.";
+      return "❌ **Eh bentar,** API Key-nya kayaknya bermasalah nih. Hubungin admin ya!";
     }
     
     if (error?.message?.includes('429')) {
-      return "⏳ **Limit Tercapai:** Terlalu banyak permintaan. Mohon tunggu beberapa saat.";
+      return "⏳ **Aduh cape,** aku lagi banyak yang nanya nih. Tunggu bentar ya, nanti tanya lagi.";
     }
 
-    return "📡 **Gangguan Transmisi:** Velicia gagal memproses data melalui node Gemini. Pastikan koneksi internet Anda stabil.";
+    return "📡 **Yah, sinyal putus!** Gagal konek ke otak Gemini aku. Coba cek internet kamu deh.";
   }
 };
