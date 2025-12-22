@@ -3,7 +3,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { 
   Home, Users, ImageIcon, Calendar, Settings, Download, Upload, 
-  RotateCcw, Mail, Check, X, Terminal, User, Monitor
+  RotateCcw, Mail, Check, X, Terminal, User, MessageSquare
 } from 'lucide-react';
 import { useStore } from '../services/store';
 
@@ -79,15 +79,17 @@ const Navbar: React.FC = () => {
         <div className="flex items-center gap-4 pointer-events-auto">
           <button 
             onClick={() => setSidebarOpen(true)}
-            className="group relative w-12 h-12 md:w-16 md:h-16 glass-card rounded-full flex items-center justify-center border-white/5 hover:border-white/20 transition-all duration-500 glow-blue overflow-hidden active:scale-95"
+            className="group relative w-12 h-12 md:w-16 md:h-16 glass-card rounded-2xl flex items-center justify-center border-white/10 hover:rotate-6 transition-all duration-500 glow-blue overflow-hidden active:scale-95"
           >
-            <div className="absolute inset-0 bg-blue-600/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div className="absolute inset-0 bg-blue-600/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
             {userProfile.image ? (
-               <img src={userProfile.image} className="w-8 h-8 md:w-12 md:h-12 object-cover rounded-full relative z-10" alt="Avatar" />
+               <img src={userProfile.image} className="w-8 h-8 md:w-12 md:h-12 object-cover rounded-xl relative z-10" alt="Avatar" />
             ) : (
-               <div className="relative z-10 text-blue-500 drop-shadow-[0_0_8px_rgba(59,130,246,0.5)] group-hover:scale-110 transition-transform">
-                  <Monitor size={28} strokeWidth={2.5} />
-               </div>
+               <img 
+                 src="https://img.icons8.com/?size=100&id=F6X9laZxVKrl&format=png&color=FFFFFF" 
+                 className="w-8 h-8 md:w-10 md:h-10 object-contain brightness-110 relative z-10 group-hover:scale-110 transition-transform" 
+                 alt="Logo" 
+               />
             )}
             <div className="absolute top-2 right-2 w-2 h-2 bg-blue-500 rounded-full border border-slate-950 animate-pulse"></div>
           </button>
@@ -141,11 +143,11 @@ const Navbar: React.FC = () => {
         }`}
       >
         <div className="p-8 border-b border-white/5 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-full flex items-center justify-center border border-white/10 glow-blue bg-blue-600/5">
-              <Monitor size={32} className="text-blue-500 drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]" strokeWidth={2.5} />
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-blue-600/20 rounded-lg">
+              <Terminal size={20} className="text-blue-500" />
             </div>
-            <span className="font-black text-2xl uppercase tracking-tighter text-white">XTJKT2</span>
+            <span className="font-black text-xs uppercase tracking-widest text-white">System Menu</span>
           </div>
           <button 
             onClick={() => setSidebarOpen(false)}
@@ -224,6 +226,7 @@ const Navbar: React.FC = () => {
           >
             <div className="relative">
               <Mail size={16} />
+              {/* Notifikasi ping merah dihapus sesuai instruksi */}
             </div>
             Mail Box / Inbox
           </NavLink>

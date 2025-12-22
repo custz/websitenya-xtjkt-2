@@ -1,7 +1,7 @@
 
 import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Network, Upload, ImageIcon, Zap, Monitor } from 'lucide-react';
+import { ArrowRight, Network, Upload, ImageIcon, Zap } from 'lucide-react';
 import { useStore } from '../services/store';
 
 const Hero: React.FC = () => {
@@ -42,19 +42,16 @@ const Hero: React.FC = () => {
       <div className="absolute top-[10%] -left-[10%] w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px] animate-pulse"></div>
       <div className="absolute bottom-[10%] -right-[10%] w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[120px] animate-pulse delay-700"></div>
 
-      {/* LARGE TRANSPARENT LOGO WATERMARK */}
-      <div className="absolute -right-20 md:right-0 top-1/2 -translate-y-1/2 pointer-events-none opacity-[0.05] select-none z-0">
-        <Monitor size={800} strokeWidth={0.5} className="text-blue-500 md:size-[1000px]" />
-      </div>
-
       <div className="max-w-7xl mx-auto px-6 relative z-10 w-full">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
           
           <div className="lg:col-span-7 space-y-12">
             <div className="inline-flex items-center gap-3 px-5 py-2 rounded-full glass-card border-white/10 text-blue-400 text-[10px] font-black uppercase tracking-[0.4em] animate-in fade-in duration-1000">
-              <div className="text-blue-500">
-                <Monitor size={16} strokeWidth={3} />
-              </div>
+              <img 
+                src="https://img.icons8.com/?size=100&id=F6X9laZxVKrl&format=png&color=3b82f6" 
+                className="w-4 h-4 object-contain" 
+                alt="Icon" 
+              />
               {isEditMode ? (
                 <input 
                   className="bg-transparent border-b border-blue-500/30 focus:outline-none w-48"
@@ -76,7 +73,7 @@ const Hero: React.FC = () => {
                 />
               ) : (
                 <h1 className="text-6xl sm:text-8xl lg:text-9xl font-black leading-[0.85] tracking-tighter text-white animate-in slide-in-from-left-12 duration-1000">
-                  {data.heroTitle.split(' ').map((word, i, arr) => (
+                  {data.heroTitle.split(' ').map((word, i) => (
                     <span key={i} className="block group cursor-default">
                       {i === 1 ? (
                         <span className="text-stroke-blue group-hover:text-blue-500 transition-all duration-700">{word} </span>
