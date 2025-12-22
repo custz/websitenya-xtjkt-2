@@ -42,16 +42,13 @@ const MailBoxPage: React.FC = () => {
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Limit ditingkatkan menjadi 100MB
-      const MAX_SIZE = 100 * 1024 * 1024;
-      if (file.size > MAX_SIZE) return alert("File terlalu besar! Maksimal 100MB diperbolehkan.");
+      if (file.size > 10 * 1024 * 1024) return alert("File terlalu besar! Maks 10MB.");
       
       setIsProcessing(true);
       const reader = new FileReader();
       reader.onloadend = async () => {
         const base64 = reader.result as string;
         if (file.type.startsWith('image/')) {
-          // Hanya kompres jika itu gambar untuk hemat storage
           const compressed = await compressPostImage(base64);
           setMediaUrl(compressed);
           setPostType('image');
@@ -98,7 +95,7 @@ const MailBoxPage: React.FC = () => {
           likes: hasLiked ? post.likes - 1 : post.likes + 1,
           likedBy: hasLiked 
             ? post.likedBy.filter(n => n !== userProfile.name) 
-            : [...userProfile.name ? [userProfile.name] : [], ...post.likedBy]
+            : [...post.likedBy, userProfile.name]
         };
       }
       return post;
@@ -162,7 +159,7 @@ const MailBoxPage: React.FC = () => {
                        <button onClick={() => setMediaUrl('')} className="absolute top-4 right-4 p-2 bg-black/60 text-white rounded-full"><X size={16} /></button>
                     </div>
                   )}
-                  {isProcessing && <div className="flex items-center justify-center py-10 text-blue-500"><Loader2 className="animate-spin mr-3" /> Mengolah Media (Maks 100MB)...</div>}
+                  {isProcessing && <div className="flex items-center justify-center py-10 text-blue-500"><Loader2 className="animate-spin mr-3" /> Mengompresi Media...</div>}
                   <textarea className="w-full bg-slate-900/50 border border-white/5 rounded-3xl p-6 text-white outline-none focus:border-blue-500/50 h-32 resize-none" placeholder="Tulis caption..." value={caption} onChange={(e) => setCaption(e.target.value)} />
                   <div className="flex gap-4">
                     <button onClick={() => fileInputRef.current?.click()} className="flex-1 py-4 rounded-2xl bg-white/5 text-slate-400 font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2"><Image size={18} /> Upload Media</button>

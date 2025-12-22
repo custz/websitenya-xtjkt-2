@@ -53,10 +53,8 @@ const GalleryPage: React.FC = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Limit ditingkatkan menjadi 100MB
-    const MAX_SIZE = 100 * 1024 * 1024; 
-    if (file.size > MAX_SIZE) {
-      alert("File terlalu raksasa! Maksimal 100MB. Perlu diingat, file besar dapat membuat browser kamu lag karena keterbatasan storage lokal.");
+    if (file.size > 8 * 1024 * 1024) {
+      alert("Ukuran file terlalu besar! Maksimal 8MB untuk performa optimal.");
       return;
     }
 
@@ -283,7 +281,7 @@ const GalleryPage: React.FC = () => {
                         <Upload size={40} />
                       </div>
                       <p className="text-sm font-black text-slate-400 uppercase tracking-widest">Pilih Media</p>
-                      <p className="text-[10px] text-slate-600 mt-3 uppercase tracking-[0.2em] font-bold">Maksimal 100MB</p>
+                      <p className="text-[10px] text-slate-600 mt-3 uppercase tracking-[0.2em] font-bold">Maksimal 8MB</p>
                     </>
                   )}
                   <input 
@@ -309,7 +307,7 @@ const GalleryPage: React.FC = () => {
                 <div className="p-5 bg-blue-600/5 border border-blue-600/10 rounded-3xl flex gap-4">
                    <AlertTriangle className="text-blue-500 shrink-0" size={24} />
                    <p className="text-[10px] text-blue-300/60 font-black leading-relaxed uppercase tracking-wider">
-                     Catatan: Browser memiliki limit storage sekitar 5-10MB. File besar (100MB) mungkin gagal disimpan permanen kecuali menggunakan database eksternal.
+                     Media akan disimpan secara lokal di browser. Pastikan untuk melakukan backup manual di Settings jika data penting.
                    </p>
                 </div>
 
