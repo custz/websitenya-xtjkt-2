@@ -16,7 +16,6 @@ const GalleryPage: React.FC = () => {
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Fungsi untuk mengambil thumbnail dari video secara robust
   const generateVideoThumbnail = (file: File): Promise<string> => {
     return new Promise((resolve) => {
       const url = URL.createObjectURL(file);
@@ -26,7 +25,7 @@ const GalleryPage: React.FC = () => {
       video.playsInline = true;
 
       video.onloadedmetadata = () => {
-        video.currentTime = 0.5; // Ambil frame awal agar tidak hitam
+        video.currentTime = 0.5;
       };
 
       video.onseeked = () => {
@@ -111,16 +110,37 @@ const GalleryPage: React.FC = () => {
     <div className="min-h-screen pt-24 md:pt-32 pb-40 px-4 sm:px-6 lg:px-8 bg-[#020617]">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-8">
-          <div className="animate-in fade-in slide-in-from-left-6 duration-700">
+          <div className="animate-in fade-in slide-in-from-left-6 duration-700 flex-1">
             <div className="inline-flex p-3 rounded-2xl bg-blue-600/10 mb-4 border border-blue-500/20">
               <ImageIcon className="text-blue-500" size={24} />
             </div>
-            <h1 className="text-4xl md:text-5xl font-black tracking-tight text-white mb-2 uppercase">
-              Digital <span className="text-blue-500 italic">Archive</span>
-            </h1>
-            <p className="text-slate-400 text-sm md:text-base max-w-md font-medium">
-              Eksplorasi dokumentasi visual terbaik dari angkatan X TJKT 2 ELITE.
-            </p>
+            {isEditMode ? (
+              <div className="space-y-4">
+                <input 
+                  className="bg-transparent border-b border-white/10 text-4xl md:text-5xl font-black tracking-tight text-white focus:outline-none w-full uppercase"
+                  value={data.galleryTitle}
+                  onChange={(e) => updateData({ galleryTitle: e.target.value })}
+                />
+                <textarea 
+                  className="bg-transparent border border-white/10 rounded-xl p-4 text-slate-400 text-sm md:text-base w-full h-24 focus:outline-none"
+                  value={data.galleryDescription}
+                  onChange={(e) => updateData({ galleryDescription: e.target.value })}
+                />
+              </div>
+            ) : (
+              <>
+                <h1 className="text-4xl md:text-5xl font-black tracking-tight text-white mb-2 uppercase">
+                  {data.galleryTitle.split(' ').map((word, i, arr) => (
+                    <span key={i}>
+                      {i === arr.length - 1 ? <span className="text-blue-500 italic">{word}</span> : word + ' '}
+                    </span>
+                  ))}
+                </h1>
+                <p className="text-slate-400 text-sm md:text-base max-w-md font-medium">
+                  {data.galleryDescription}
+                </p>
+              </>
+            )}
           </div>
 
           <div className="flex flex-wrap items-center gap-4 w-full md:w-auto animate-in fade-in slide-in-from-right-6 duration-700">

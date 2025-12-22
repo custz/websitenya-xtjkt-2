@@ -41,8 +41,27 @@ const SchedulePage: React.FC = () => {
           <div className="inline-flex p-4 rounded-3xl bg-emerald-600/10 mb-6">
             <Calendar className="text-emerald-500" size={32} />
           </div>
-          <h1 className="text-5xl font-bold mb-4">Jadwal Akademik</h1>
-          <p className="text-slate-400 text-lg">Sinkronisasi waktu dan pengetahuan X TJKT 2.</p>
+          <div className="space-y-4 flex flex-col items-center">
+            {isEditMode ? (
+              <input 
+                className="bg-transparent border-b border-white/10 text-5xl font-bold mb-4 text-white text-center focus:outline-none w-full max-w-2xl"
+                value={data.scheduleTitle}
+                onChange={(e) => updateData({ scheduleTitle: e.target.value })}
+              />
+            ) : (
+              <h1 className="text-5xl font-bold mb-4">{data.scheduleTitle}</h1>
+            )}
+            
+            {isEditMode ? (
+              <textarea 
+                className="bg-transparent border border-white/10 rounded-xl p-4 text-slate-400 text-lg w-full max-w-xl text-center focus:outline-none h-24"
+                value={data.scheduleDescription}
+                onChange={(e) => updateData({ scheduleDescription: e.target.value })}
+              />
+            ) : (
+              <p className="text-slate-400 text-lg">{data.scheduleDescription}</p>
+            )}
+          </div>
         </div>
 
         {/* Day Selector */}
@@ -66,7 +85,15 @@ const SchedulePage: React.FC = () => {
                 <div className="p-3 bg-blue-600/10 rounded-xl">
                   <Layers className="text-blue-500" size={24} />
                 </div>
-                <h2 className="text-2xl font-bold">Pelajaran Umum</h2>
+                {isEditMode ? (
+                  <input 
+                    className="bg-transparent border-b border-white/10 text-2xl font-bold text-white focus:outline-none w-48"
+                    value={data.scheduleGeneralLabel}
+                    onChange={(e) => updateData({ scheduleGeneralLabel: e.target.value })}
+                  />
+                ) : (
+                  <h2 className="text-2xl font-bold">{data.scheduleGeneralLabel}</h2>
+                )}
               </div>
               {isEditMode && (
                 <button onClick={() => addLesson(activeDay, 'umum')} className="p-2 bg-blue-600/20 text-blue-400 rounded-lg hover:bg-blue-600 hover:text-white transition-all">
@@ -79,7 +106,7 @@ const SchedulePage: React.FC = () => {
               {umum.length > 0 ? umum.map((lesson) => (
                 <LessonCard key={lesson.id} lesson={lesson} isEditMode={isEditMode} onUpdate={(u) => updateLesson(activeDay, lesson.id, u)} onRemove={() => removeLesson(activeDay, lesson.id)} />
               )) : (
-                <div className="p-12 border border-dashed border-slate-800 rounded-3xl text-center text-slate-500 italic">Tidak ada pelajaran umum hari ini</div>
+                <div className="p-12 border border-dashed border-slate-800 rounded-3xl text-center text-slate-500 italic">Tidak ada pelajaran hari ini</div>
               )}
             </div>
           </div>
@@ -91,7 +118,15 @@ const SchedulePage: React.FC = () => {
                 <div className="p-3 bg-orange-600/10 rounded-xl">
                   <Briefcase className="text-orange-500" size={24} />
                 </div>
-                <h2 className="text-2xl font-bold">Pelajaran Produktif</h2>
+                {isEditMode ? (
+                  <input 
+                    className="bg-transparent border-b border-white/10 text-2xl font-bold text-white focus:outline-none w-48"
+                    value={data.scheduleProductiveLabel}
+                    onChange={(e) => updateData({ scheduleProductiveLabel: e.target.value })}
+                  />
+                ) : (
+                  <h2 className="text-2xl font-bold">{data.scheduleProductiveLabel}</h2>
+                )}
               </div>
               {isEditMode && (
                 <button onClick={() => addLesson(activeDay, 'produktif')} className="p-2 bg-orange-600/20 text-orange-400 rounded-lg hover:bg-orange-600 hover:text-white transition-all">
@@ -104,7 +139,7 @@ const SchedulePage: React.FC = () => {
               {produktif.length > 0 ? produktif.map((lesson) => (
                 <LessonCard key={lesson.id} lesson={lesson} isEditMode={isEditMode} onUpdate={(u) => updateLesson(activeDay, lesson.id, u)} onRemove={() => removeLesson(activeDay, lesson.id)} />
               )) : (
-                <div className="p-12 border border-dashed border-slate-800 rounded-3xl text-center text-slate-500 italic">Tidak ada pelajaran produktif hari ini</div>
+                <div className="p-12 border border-dashed border-slate-800 rounded-3xl text-center text-slate-500 italic">Tidak ada pelajaran hari ini</div>
               )}
             </div>
           </div>
@@ -114,7 +149,6 @@ const SchedulePage: React.FC = () => {
   );
 };
 
-// Fixed: Explicitly typed LessonCard as React.FC to handle React's 'key' prop correctly
 const LessonCard: React.FC<{ 
   lesson: Lesson; 
   isEditMode: boolean; 

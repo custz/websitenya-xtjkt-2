@@ -1,17 +1,17 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, User, Bot, Loader2, Sparkles, Network, RefreshCcw, Cpu } from 'lucide-react';
+import { Send, User, Bot, Loader2, Sparkles, Network, RefreshCcw, Cpu, Plus, Trash2 } from 'lucide-react';
 import { Message } from '../types';
 import { getVeliciaResponse } from '../services/geminiService';
 import MarkdownRenderer from '../components/MarkdownRenderer';
 import { useStore } from '../services/store';
 
 const VeliciaPage: React.FC = () => {
-  const { data } = useStore();
+  const { data, updateData, isEditMode } = useStore();
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'bot',
-      content: `Halo! Saya **Velicia**, asisten cerdas berbasis **Gemini Flash Stable**. Koneksi saya sekarang lebih stabil dan cepat. Ada kendala jaringan atau tugas TJKT yang bisa saya bantu?`,
+      content: data.veliciaIntro,
       timestamp: new Date(),
     }
   ]);
@@ -58,7 +58,7 @@ const VeliciaPage: React.FC = () => {
     } catch (err) {
       setMessages(prev => [...prev, {
         role: 'bot',
-        content: "⚠️ Terjadi kesalahan sistem saat menghubungi Velicia.",
+        content: "⚠️ Maaf banget, sistem lagi rada error nih.",
         timestamp: new Date(),
       }]);
     } finally {
@@ -67,13 +67,27 @@ const VeliciaPage: React.FC = () => {
   };
 
   const clearChat = () => {
-    if(window.confirm("Hapus semua riwayat chat?")) {
+    if(window.confirm("Hapus semua obrolan kita?")) {
       setMessages([{
         role: 'bot',
-        content: `Sistem di-reset. Ada hal teknis lain yang ingin ditanyakan?`,
+        content: `Udah bersih ya! Ada yang mau ditanyain lagi?`,
         timestamp: new Date(),
       }]);
     }
+  };
+
+  const updateExpertise = (index: number, value: string) => {
+    const newItems = [...data.veliciaExpertiseItems];
+    newItems[index] = value;
+    updateData({ veliciaExpertiseItems: newItems });
+  };
+
+  const addExpertise = () => {
+    updateData({ veliciaExpertiseItems: [...data.veliciaExpertiseItems, "Keahlian Baru"] });
+  };
+
+  const removeExpertise = (index: number) => {
+    updateData({ veliciaExpertiseItems: data.veliciaExpertiseItems.filter((_, i) => i !== index) });
   };
 
   return (
@@ -85,26 +99,89 @@ const VeliciaPage: React.FC = () => {
             <div className="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-600/30 animate-pulse">
               <Cpu size={28} className="text-white" />
             </div>
-            <div>
-              <h1 className="text-2xl font-bold tracking-tight text-white">Velicia AI</h1>
-              <p className="text-blue-500 font-mono text-[10px] uppercase tracking-widest font-bold">Stable Edition</p>
+            <div className="flex flex-col flex-1">
+              {isEditMode ? (
+                <input 
+                  className="bg-transparent border-b border-white/10 text-2xl font-bold tracking-tight text-white focus:outline-none"
+                  value={data.veliciaSidebarTitle}
+                  onChange={(e) => updateData({ veliciaSidebarTitle: e.target.value })}
+                />
+              ) : (
+                <h1 className="text-2xl font-bold tracking-tight text-white">{data.veliciaSidebarTitle}</h1>
+              )}
+              {isEditMode ? (
+                <input 
+                  className="bg-transparent border-b border-blue-500/30 text-blue-500 font-mono text-[10px] uppercase tracking-widest font-bold focus:outline-none mt-1"
+                  value={data.veliciaSidebarSubtitle}
+                  onChange={(e) => updateData({ veliciaSidebarSubtitle: e.target.value })}
+                />
+              ) : (
+                <p className="text-blue-500 font-mono text-[10px] uppercase tracking-widest font-bold">{data.veliciaSidebarSubtitle}</p>
+              )}
             </div>
           </div>
           
           <div className="space-y-4">
             <div className="p-4 bg-slate-900/50 rounded-2xl border border-slate-800">
-              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Status Node</h4>
+              {isEditMode ? (
+                <input 
+                  className="bg-transparent border-b border-white/10 text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 focus:outline-none w-full"
+                  value={data.veliciaStatusLabel}
+                  onChange={(e) => updateData({ veliciaStatusLabel: e.target.value })}
+                />
+              ) : (
+                <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">{data.veliciaStatusLabel}</h4>
+              )}
               <div className="flex items-center gap-2 text-emerald-500 text-sm font-bold">
                 <div className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></div>
-                Active (Gemini Flash)
+                {isEditMode ? (
+                  <input 
+                    className="bg-transparent border-b border-emerald-500/30 focus:outline-none w-full"
+                    value={data.veliciaStatusValue}
+                    onChange={(e) => updateData({ veliciaStatusValue: e.target.value })}
+                  />
+                ) : (
+                  data.veliciaStatusValue
+                )}
               </div>
             </div>
             <div className="p-4 bg-slate-900/50 rounded-2xl border border-slate-800">
-              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Capabilities</h4>
+              {isEditMode ? (
+                <div className="flex justify-between items-center mb-2">
+                  <input 
+                    className="bg-transparent border-b border-white/10 text-xs font-bold text-slate-500 uppercase tracking-widest focus:outline-none w-full"
+                    value={data.veliciaExpertiseLabel}
+                    onChange={(e) => updateData({ veliciaExpertiseLabel: e.target.value })}
+                  />
+                  <button onClick={addExpertise} className="text-blue-500 hover:text-blue-400 p-1">
+                    <Plus size={14} />
+                  </button>
+                </div>
+              ) : (
+                <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">{data.veliciaExpertiseLabel}</h4>
+              )}
               <ul className="text-slate-400 text-xs space-y-2">
-                <li className="flex items-center gap-2">• Cisco & Mikrotik Specialist</li>
-                <li className="flex items-center gap-2">• Network Protocol Guru</li>
-                <li className="flex items-center gap-2">• Linux Admin Expert</li>
+                {data.veliciaExpertiseItems.map((item, i) => (
+                  <li key={i} className="flex items-center justify-between group">
+                    <div className="flex items-center gap-2">
+                      <span>•</span>
+                      {isEditMode ? (
+                        <input 
+                          className="bg-transparent border-b border-slate-800 focus:outline-none focus:border-blue-500/50 w-full"
+                          value={item}
+                          onChange={(e) => updateExpertise(i, e.target.value)}
+                        />
+                      ) : (
+                        <span>{item}</span>
+                      )}
+                    </div>
+                    {isEditMode && (
+                      <button onClick={() => removeExpertise(i)} className="text-red-500 opacity-0 group-hover:opacity-100 p-1">
+                        <Trash2 size={12} />
+                      </button>
+                    )}
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
@@ -115,19 +192,31 @@ const VeliciaPage: React.FC = () => {
           className="mt-auto flex items-center justify-center gap-2 px-6 py-4 bg-slate-900 hover:bg-red-900/20 hover:text-red-400 text-slate-400 rounded-2xl transition-all border border-slate-800 font-bold text-xs uppercase tracking-widest"
         >
           <RefreshCcw size={16} />
-          Wipe Memory
+          Lupain Obrolan
         </button>
       </div>
 
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col relative h-full pt-16 md:pt-0">
+        {/* Intro Edit View (Admin Only) */}
+        {isEditMode && (
+          <div className="p-4 bg-blue-600/5 border-b border-white/5 mx-4 mt-4 rounded-2xl">
+            <label className="block text-[8px] font-black uppercase text-blue-500 tracking-widest mb-1">Bot Initial Message</label>
+            <textarea 
+              className="w-full bg-slate-900 border border-white/10 rounded-xl p-3 text-xs text-white focus:outline-none h-20"
+              value={data.veliciaIntro}
+              onChange={(e) => updateData({ veliciaIntro: e.target.value })}
+            />
+          </div>
+        )}
+
         {/* Mobile Header */}
         <div className="lg:hidden flex items-center justify-between p-4 border-b border-slate-800 bg-slate-950/80 backdrop-blur-md">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-600/20">
               <Cpu size={20} className="text-white" />
             </div>
-            <span className="font-bold text-sm">Velicia Flash Stable</span>
+            <span className="font-bold text-sm">{data.veliciaSidebarTitle}</span>
           </div>
           <button onClick={clearChat} className="p-2 text-slate-500 hover:text-white transition-colors">
             <RefreshCcw size={18} />
@@ -188,7 +277,7 @@ const VeliciaPage: React.FC = () => {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-              placeholder="Tulis pesan teknis..."
+              placeholder="Tanya apa aja ke Velicia..."
               className="relative w-full bg-slate-900 border border-white/10 text-white pl-5 md:pl-6 pr-14 md:pr-16 py-4 md:py-5 rounded-2xl focus:outline-none focus:border-blue-500/50 shadow-2xl text-sm md:text-base"
             />
             <button
@@ -200,7 +289,7 @@ const VeliciaPage: React.FC = () => {
             </button>
           </div>
           <p className="text-center text-[9px] text-slate-600 uppercase tracking-[0.3em] mt-4 font-bold hidden md:block">
-            Gemini Flash Stable Engine • v2.1
+            Bicara Sama {data.veliciaSidebarTitle} v2.1
           </p>
         </div>
       </div>

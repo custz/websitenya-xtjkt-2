@@ -1,7 +1,7 @@
 
 import React from 'react';
 import Hero from '../components/Hero';
-import { Network, Server, ShieldCheck, Terminal, Globe } from 'lucide-react';
+import { Network, Server, ShieldCheck, Terminal, Globe, Heart, Zap, Smile } from 'lucide-react';
 import { useStore } from '../services/store';
 
 const AestheticFeature = () => {
@@ -13,8 +13,8 @@ const AestheticFeature = () => {
     updateData({ features: newFeatures });
   };
 
-  const icons = [<Server size={32} />, <ShieldCheck size={32} />, <Globe size={32} />];
-  const colors = ["text-blue-500", "text-purple-500", "text-emerald-500"];
+  const icons = [<Heart size={32} />, <Zap size={32} />, <Smile size={32} />];
+  const colors = ["text-pink-500", "text-orange-500", "text-blue-500"];
 
   return (
     <section className="py-32 bg-[#05050a] relative overflow-hidden">
