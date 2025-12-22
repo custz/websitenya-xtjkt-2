@@ -8,6 +8,8 @@ import StudentsPage from './pages/StudentsPage';
 import GalleryPage from './pages/GalleryPage';
 import SchedulePage from './pages/SchedulePage';
 import LoginPage from './pages/LoginPage';
+import ProfilePage from './pages/ProfilePage';
+import MailBoxPage from './pages/MailBoxPage';
 
 const AppContent: React.FC = () => {
   const { userRole } = useStore();
@@ -18,7 +20,7 @@ const AppContent: React.FC = () => {
 
   return (
     <Router>
-      <div className="min-h-screen bg-slate-950 text-slate-50 flex flex-col selection:bg-blue-600 selection:text-white">
+      <div className="min-h-screen bg-[#05050a] text-slate-50 flex flex-col selection:bg-blue-600 selection:text-white">
         <Navbar />
         <main className="flex-grow">
           <Routes>
@@ -26,6 +28,8 @@ const AppContent: React.FC = () => {
             <Route path="/siswa" element={<StudentsPage />} />
             <Route path="/gallery" element={<GalleryPage />} />
             <Route path="/jadwal" element={<SchedulePage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/mailbox" element={<MailBoxPage />} />
           </Routes>
         </main>
       </div>
