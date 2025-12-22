@@ -10,10 +10,18 @@ const Hero: React.FC = () => {
 
   const handleEdit = (field: string, value: string) => {
     if (field.includes('.')) {
-      const [p1, p2] = field.split('.');
-      updateData({ stats: { ...data.stats, [p2]: value } });
+      const parts = field.split('.');
+      const parent = parts[0] as keyof typeof data;
+      const child = parts[1];
+      
+      updateData({ 
+        [parent]: { 
+          ...(data[parent] as object), 
+          [child]: value 
+        } 
+      });
     } else {
-      updateData({ [field]: value });
+      updateData({ [field as keyof typeof data]: value });
     }
   };
 
@@ -39,14 +47,27 @@ const Hero: React.FC = () => {
           
           <div className="lg:col-span-7 space-y-12">
             <div className="inline-flex items-center gap-3 px-5 py-2 rounded-full glass-card border-white/10 text-blue-400 text-[10px] font-black uppercase tracking-[0.4em] animate-in fade-in duration-1000">
-              <Zap size={14} className="fill-blue-400" />
-              <span>System Node / X-TJKT-2</span>
+              <img 
+                src="https://img.icons8.com/?size=100&id=F6X9laZxVKrl&format=png&color=3b82f6" 
+                className="w-4 h-4 object-contain" 
+                alt="Icon" 
+              />
+              {isEditMode ? (
+                <input 
+                  className="bg-transparent border-b border-blue-500/30 focus:outline-none w-48"
+                  value={data.heroBadge}
+                  onChange={(e) => updateData({ heroBadge: e.target.value })}
+                />
+              ) : (
+                <span>{data.heroBadge}</span>
+              )}
             </div>
 
             <div className="relative">
               {isEditMode ? (
                 <textarea 
-                  className="bg-transparent border-b border-white/10 text-5xl sm:text-7xl font-black text-white focus:outline-none w-full tracking-tighter"
+                  className="bg-transparent border-b border-white/10 text-5xl sm:text-7xl font-black text-white focus:outline-none w-full tracking-tighter resize-none"
+                  rows={2}
                   value={data.heroTitle}
                   onChange={(e) => handleEdit('heroTitle', e.target.value)}
                 />
@@ -62,21 +83,37 @@ const Hero: React.FC = () => {
                 </h1>
               )}
               <div className="absolute -top-10 -right-10 text-stroke text-8xl font-black opacity-10 select-none pointer-events-none hidden lg:block uppercase">
-                Elite
+                {isEditMode ? (
+                  <input 
+                    className="bg-transparent border-b border-white/10 text-center focus:outline-none w-48 text-4xl"
+                    value={data.heroFloatingText}
+                    onChange={(e) => updateData({ heroFloatingText: e.target.value })}
+                  />
+                ) : (
+                  data.heroFloatingText
+                )}
               </div>
             </div>
 
-            <p className="text-xl text-slate-400 max-w-lg leading-relaxed font-light italic border-l-2 border-blue-500/30 pl-8 animate-in fade-in delay-500 duration-1000">
-              {data.heroDescription}
-            </p>
+            {isEditMode ? (
+              <textarea 
+                className="w-full bg-transparent border border-white/10 rounded-xl p-4 text-xl text-slate-400 leading-relaxed font-light italic focus:outline-none h-32"
+                value={data.heroDescription}
+                onChange={(e) => handleEdit('heroDescription', e.target.value)}
+              />
+            ) : (
+              <p className="text-xl text-slate-400 max-w-lg leading-relaxed font-light italic border-l-2 border-blue-500/30 pl-8 animate-in fade-in delay-500 duration-1000">
+                {data.heroDescription}
+              </p>
+            )}
 
             <div className="flex flex-wrap gap-6 pt-4 animate-in fade-in delay-700 duration-1000">
               <Link to="/siswa" className="group relative px-12 py-6 bg-white text-black rounded-full font-black uppercase tracking-[0.2em] text-[10px] overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-2xl shadow-white/10">
-                <span className="relative z-10 flex items-center gap-3">Explore Hierarchy <ArrowRight size={16} /></span>
+                <span className="relative z-10 flex items-center gap-3">Cek Warga Kelas <ArrowRight size={16} /></span>
                 <div className="absolute inset-0 bg-blue-500 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
               </Link>
               <Link to="/gallery" className="px-12 py-6 glass-card hover:bg-white/5 text-white rounded-full font-black uppercase tracking-[0.2em] text-[10px] border border-white/10 transition-all flex items-center gap-3">
-                <ImageIcon size={16} /> Visual Archive
+                <ImageIcon size={16} /> Galeri Foto
               </Link>
             </div>
           </div>
@@ -96,35 +133,52 @@ const Hero: React.FC = () => {
                     <button onClick={() => fileInputRef.current?.click()} className="p-6 bg-white text-black rounded-full mb-4 shadow-2xl">
                       <Upload size={32} />
                     </button>
-                    <p className="text-[10px] font-black text-white uppercase tracking-widest">Update Visual Node</p>
+                    <p className="text-[10px] font-black text-white uppercase tracking-widest">Update Foto Kelas</p>
                     <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileUpload} />
                   </div>
                 )}
               </div>
               
-              {/* Floating Decorative Elements */}
               <div className="absolute -bottom-8 -left-8 glass-card px-8 py-6 rounded-3xl border-white/10 shadow-2xl animate-in slide-in-from-bottom-8 duration-1000 delay-1000">
-                <div className="mono text-[10px] text-blue-500 font-bold mb-1 tracking-widest uppercase">Protocol_Active</div>
-                <div className="text-2xl font-black text-white tracking-tighter uppercase">X-TJKT-2</div>
+                <div className="mono text-[10px] text-blue-500 font-bold mb-1 tracking-widest uppercase">Lagi Rame</div>
+                <div className="text-2xl font-black text-white tracking-tighter uppercase">{data.brandName}</div>
               </div>
             </div>
           </div>
 
         </div>
 
-        {/* Stats Section Integrated into Hero Bottom */}
+        {/* Stats Section */}
         <div className="mt-32 grid grid-cols-2 md:grid-cols-4 gap-8 border-t border-white/5 pt-16">
           {[
-            { label: "Active Nodes", val: data.stats.students, suffix: "Siswa" },
-            { label: "Core Subjects", val: data.stats.subjects, suffix: "Mapel" },
-            { label: "Network Health", val: data.stats.uptime, suffix: "Online" },
-            { label: "System Version", val: "2.4.0", suffix: "Stable" },
+            { id: 'students', label: data.statLabels.students, val: data.stats.students, suffix: "Siswa" },
+            { id: 'subjects', label: data.statLabels.subjects, val: data.stats.subjects, suffix: "Mapel" },
+            { id: 'uptime', label: data.statLabels.uptime, val: data.stats.uptime, suffix: "Online" },
+            { id: 'version', label: data.statLabels.version, val: "2.4.0", suffix: "Stable" },
           ].map((stat, i) => (
-            <div key={i} className="group">
-              <div className="text-stroke-blue text-4xl font-black mb-1 group-hover:text-blue-500 transition-colors duration-500">
-                {stat.val}
-              </div>
-              <div className="mono text-[9px] text-slate-500 font-bold uppercase tracking-[0.3em]">{stat.label}</div>
+            <div key={i} className="group space-y-1">
+              {isEditMode ? (
+                <div className="flex flex-col gap-2">
+                  <input 
+                    className="bg-transparent border-b border-blue-500/30 text-stroke-blue text-4xl font-black focus:outline-none w-full"
+                    value={stat.val}
+                    onChange={(e) => i < 3 ? handleEdit(`stats.${stat.id}`, e.target.value) : null}
+                    disabled={i === 3}
+                  />
+                  <input 
+                    className="mono text-[9px] text-slate-500 font-bold uppercase tracking-[0.3em] bg-transparent border-b border-white/10 focus:outline-none focus:border-blue-500"
+                    value={stat.label}
+                    onChange={(e) => handleEdit(`statLabels.${stat.id}`, e.target.value)}
+                  />
+                </div>
+              ) : (
+                <>
+                  <div className="text-stroke-blue text-4xl font-black group-hover:text-blue-500 transition-colors duration-500">
+                    {stat.val}
+                  </div>
+                  <div className="mono text-[9px] text-slate-500 font-bold uppercase tracking-[0.3em]">{stat.label}</div>
+                </>
+              )}
             </div>
           ))}
         </div>
