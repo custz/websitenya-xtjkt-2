@@ -1,6 +1,22 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { SiteData, Student, GalleryItem, Lesson, UserRole, UserProfile, Mail, AdminProfile, Post } from '../types';
+import { SiteData, UserRole, UserProfile } from '../types';
+
+interface StoreContextType {
+  data: SiteData;
+  updateData: (newData: Partial<SiteData>) => void;
+  importData: (jsonString: string) => boolean;
+  resetToDefault: () => void;
+  isEditMode: boolean;
+  setEditMode: (val: boolean) => void;
+  showNav: boolean;
+  setShowNav: (val: boolean) => void;
+  userRole: UserRole;
+  login: (role: UserRole) => void;
+  logout: () => void;
+  userProfile: UserProfile;
+  updateProfile: (newProfile: Partial<UserProfile>) => void;
+}
 
 const defaultData: SiteData = {
   brandName: "X TJKT 2 ELITE",
@@ -10,71 +26,41 @@ const defaultData: SiteData = {
   heroDescription: "Kami bukan sekadar barisan kode atau tumpukan kabel. Kami adalah X TJKT 2, sekumpulan inovator muda yang siap menghubungkan dunia melalui teknologi jaringan dan telekomunikasi.",
   heroImage: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800&h=600",
   heroFloatingText: "TJKT",
-  stats: {
-    students: "41",
-    subjects: "12",
-    uptime: "100%"
-  },
-  statLabels: {
-    students: "Engineers",
-    subjects: "Lab Projects",
-    uptime: "Connection",
-    version: "Tech Stack"
-  },
+  stats: { students: "41", subjects: "12", uptime: "100%" },
+  statLabels: { students: "Engineers", subjects: "Lab Projects", uptime: "Connection", version: "Tech Stack" },
   students: [
     { id: '1', role: "Wali Kelas", name: "Ibu/Bapak Guru", bio: "Pembimbing teknis dan moral barisan elite X TJKT 2.", color: "from-rose-600 to-orange-700", image: "" },
-    { id: '2', role: "Ketua Kelas", name: "Ketua Kece", bio: "Main Node kelas, mengatur traffic koordinasi antar warga.", color: "from-blue-600 to-indigo-700", image: "" },
-    { id: '6', role: "Lead Developer", name: "ZENT TECH.", bio: "Architect of this digital space. Crafting experiences through logic and art.", color: "from-yellow-500 to-orange-600", image: "" },
+    { id: '6', role: "Lead Developer", name: "ZENT TECH.", bio: "Architect of this digital space.", color: "from-yellow-500 to-orange-600", image: "" },
   ],
-  gallery: [
-    { id: '1', type: 'image', url: "https://images.unsplash.com/photo-1558494949-ef010cbdcc51?auto=format&fit=crop&q=80&w=600", title: "Cisco Configuration Lab", category: "gambar" },
-    { id: '2', type: 'video', url: "https://www.w3schools.com/html/mov_bbb.mp4", title: "Class Vibes", category: "video" }
-  ],
-  schedule: {
-    "Senin": [
-      { id: 's1', time: "07:15 - 08:30", subject: "Upacara & Literasi", teacher: "Guru Piket", type: 'umum' },
-      { id: 's2', time: "08:30 - 10:00", subject: "Dasar-Dasar TJKT", teacher: "Team Produktif", type: 'produktif' }
-    ],
-    "Selasa": [], "Rabu": [], "Kamis": [], "Jumat": []
-  },
+  gallery: [],
+  schedule: { "Senin": [], "Selasa": [], "Rabu": [], "Kamis": [], "Jumat": [] },
   featuresSubtitle: "Our Core Protocols",
   featuresTitle: "Why We Are The Elite",
   features: [
-    { title: "High Speed Logic", desc: "Berpikir cepat, bertindak tepat. Kami dilatih untuk menyelesaikan masalah jaringan dalam hitungan detik." },
-    { title: "Secure Bond", desc: "Persahabatan kami terenkripsi dengan rasa solidaritas yang gak bisa di-hack siapapun." },
-    { title: "Global Access", desc: "Berwawasan luas, siap bersaing di industri telekomunikasi global." }
+    { title: "High Speed Logic", desc: "Berpikir cepat, bertindak tepat." },
+    { title: "Secure Bond", desc: "Persahabatan kami terenkripsi." },
+    { title: "Global Access", desc: "Siap bersaing di industri global." }
   ],
-  quoteText: "Dalam jaringan, setiap node itu penting. Begitu juga di kelas kita, gak ada yang boleh tertinggal di belakang firewall.",
+  quoteText: "Dalam jaringan, setiap node itu penting.",
   quoteAuthor: "X TJKT 2 / 2024",
   studentsTitle: "NETWORK NODES",
-  studentsDescription: "Daftar personil elite yang menggerakkan setiap paket data kebahagiaan di kelas X TJKT 2.",
+  studentsDescription: "Daftar personil elite X TJKT 2.",
   galleryTitle: "SERVER LOGS",
-  galleryDescription: "Visualisasi memori yang tersimpan dalam database kenangan kelas kita.",
+  galleryDescription: "Visualisasi memori kelas kita.",
   scheduleTitle: "EXECUTION PLAN",
-  scheduleDescription: "Runtime harian kita. Jangan sampai ada 'Missing Dependency' karena lupa jadwal!",
+  scheduleDescription: "Runtime harian kita.",
   scheduleGeneralLabel: "Standard Course",
   scheduleProductiveLabel: "Engineering Lab",
   mails: [],
-  adminProfile: {
-    name: "ADMIN_ROOT",
-    role: "System Architect",
-    image: "",
-    verified: true
-  },
+  adminProfile: { name: "ADMIN_ROOT", role: "System Architect", image: "", verified: true },
   posts: [],
-  // Fixed: Added default values for Velicia AI assistant config
-  veliciaIntro: "Halo! Aku Velicia, asisten elite X TJKT 2. Ada yang bisa aku bantu seputar jaringan atau tugas hari ini?",
+  veliciaIntro: "Halo! Aku Velicia, asisten elite X TJKT 2. Ada yang bisa aku bantu?",
   veliciaSidebarTitle: "Velicia AI",
   veliciaSidebarSubtitle: "X-TJKT-2 Network Assistant",
   veliciaStatusLabel: "System Status",
   veliciaStatusValue: "Online & Ready",
   veliciaExpertiseLabel: "Technical Expertise",
-  veliciaExpertiseItems: [
-    "Cisco Networking",
-    "Server Administration",
-    "Network Security",
-    "Fiber Optics"
-  ]
+  veliciaExpertiseItems: ["Cisco Networking", "Server Administration"]
 };
 
 const defaultProfile: UserProfile = {
@@ -91,14 +77,22 @@ const StoreContext = createContext<StoreContextType | undefined>(undefined);
 
 export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [data, setData] = useState<SiteData>(() => {
-    const saved = localStorage.getItem('tjkt_v2_data');
-    const parsed = saved ? JSON.parse(saved) : defaultData;
-    return { ...defaultData, ...parsed };
+    try {
+      const saved = localStorage.getItem('tjkt_v2_data');
+      return saved ? { ...defaultData, ...JSON.parse(saved) } : defaultData;
+    } catch (e) {
+      console.error("Gagal memuat data:", e);
+      return defaultData;
+    }
   });
 
   const [userProfile, setUserProfile] = useState<UserProfile>(() => {
-    const saved = localStorage.getItem('tjkt_v2_profile');
-    return saved ? JSON.parse(saved) : defaultProfile;
+    try {
+      const saved = localStorage.getItem('tjkt_v2_profile');
+      return saved ? { ...defaultProfile, ...JSON.parse(saved) } : defaultProfile;
+    } catch (e) {
+      return defaultProfile;
+    }
   });
 
   const [isEditMode, setEditMode] = useState(false);
@@ -108,28 +102,27 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   });
 
   useEffect(() => {
-    localStorage.setItem('tjkt_v2_data', JSON.stringify(data));
+    try {
+      localStorage.setItem('tjkt_v2_data', JSON.stringify(data));
+    } catch (e) {
+      console.error("LocalStorage Penuh! Gagal menyimpan data SiteData.");
+      alert("⚠️ Memori browser penuh! Coba hapus beberapa postingan atau gunakan gambar yang lebih kecil.");
+    }
   }, [data]);
 
   useEffect(() => {
-    localStorage.setItem('tjkt_v2_profile', JSON.stringify(userProfile));
+    try {
+      localStorage.setItem('tjkt_v2_profile', JSON.stringify(userProfile));
+    } catch (e) {
+      console.error("Gagal menyimpan profil.");
+    }
   }, [userProfile]);
 
   useEffect(() => {
-    if (userRole) {
-      localStorage.setItem('tjkt_v2_role', userRole);
-    }
+    if (userRole) localStorage.setItem('tjkt_v2_role', userRole);
   }, [userRole]);
 
   const updateData = (newData: Partial<SiteData>) => {
-    if (userRole !== 'admin') {
-      // Allow users to update posts (for likes/comments)
-      if (newData.posts) {
-         setData(prev => ({ ...prev, posts: newData.posts! }));
-         return;
-      }
-      return; 
-    }
     setData(prev => ({ ...prev, ...newData }));
   };
 
@@ -138,37 +131,30 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   const importData = (jsonString: string) => {
-    if (userRole !== 'admin') return false;
     try {
       const parsed = JSON.parse(jsonString);
-      if (parsed.brandName && parsed.students) {
-        setData(parsed);
-        return true;
-      }
-      return false;
+      setData(parsed);
+      return true;
     } catch (e) {
       return false;
     }
   };
 
   const resetToDefault = () => {
-    if (userRole !== 'admin') return;
-    if (window.confirm("Beneran mau balikin semua data ke awal?")) {
+    if (window.confirm("Reset semua data?")) {
       setData(defaultData);
+      localStorage.removeItem('tjkt_v2_data');
     }
   };
 
   const login = (role: UserRole) => setUserRole(role);
-  const logout = () => {
-    console.warn("Sesi bersifat permanen.");
-  };
+  const logout = () => { setUserRole(null); localStorage.removeItem('tjkt_v2_role'); };
 
   return (
     <StoreContext.Provider value={{ 
       data, updateData, importData, resetToDefault, 
-      isEditMode, setEditMode: (v) => userRole === 'admin' ? setEditMode(v) : null, 
-      showNav, setShowNav, userRole, login, logout,
-      userProfile, updateProfile
+      isEditMode, setEditMode, showNav, setShowNav, 
+      userRole, login, logout, userProfile, updateProfile
     }}>
       {children}
     </StoreContext.Provider>
