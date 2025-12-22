@@ -1,6 +1,6 @@
 
 import React, { useState, useRef } from 'react';
-import { Shield, BookOpen, Wallet, Plus, Trash2, Camera, X, Upload, Terminal, Cpu, Zap, Fingerprint, Info, Star, Coffee, Heart, UserCheck, Users, Award, Code, Tv } from 'lucide-react';
+import { Shield, BookOpen, Wallet, Plus, Trash2, Camera, X, Upload, Terminal, Cpu, Zap, Fingerprint, Info, Star, Coffee, Heart, UserCheck, Users, Award, Code, Tv, Crown } from 'lucide-react';
 import { useStore } from '../services/store';
 import { Student } from '../types';
 
@@ -22,19 +22,19 @@ const StudentsPage: React.FC = () => {
     const n = name.toLowerCase();
     
     // Special identity checks
-    if (n.includes('zent tech')) return <Code size={16} className="text-yellow-400" />;
+    if (r.includes('wali kelas')) return <Crown size={16} className="text-orange-400" />;
+    if (r.includes('lead developer') || n.includes('zent tech')) return <Code size={16} className="text-yellow-400" />;
     if (r.includes('osis')) return <Award size={16} className="text-indigo-400" />;
-    if (r.includes('wibu')) return <Tv size={16} className="text-pink-400" />;
     
     // Structure checks
-    if (r.includes('wali')) return <UserCheck size={16} className="text-orange-400" />;
-    if (r.includes('ketua') && !r.includes('wakil')) return <Star size={16} className="text-yellow-400" />;
-    if (r.includes('wakil')) return <Users size={16} className="text-indigo-400" />;
+    if (r.includes('ketua murid')) return <Star size={16} className="text-yellow-400" />;
+    if (r.includes('wakil murid')) return <Users size={16} className="text-indigo-400" />;
     if (r.includes('sekretaris')) return <BookOpen size={16} className="text-blue-400" />;
     if (r.includes('bendahara')) return <Wallet size={16} className="text-emerald-400" />;
     if (r.includes('keamanan') || r.includes('ketertiban')) return <Shield size={16} className="text-red-400" />;
     if (r.includes('kerohanian')) return <Heart size={16} className="text-pink-400" />;
     if (r.includes('olahraga')) return <Zap size={16} className="text-orange-400" />;
+    
     return <Coffee size={16} className="text-slate-400" />; // Default for "Warga Santuy"
   };
 
@@ -235,9 +235,14 @@ const StudentsPage: React.FC = () => {
                      </div>
                    ) : (
                     <>
-                      <h2 className="text-4xl font-black text-white leading-none tracking-tighter group-hover:text-blue-500 transition-colors duration-500 cursor-default uppercase">
-                        {person.name}
-                      </h2>
+                      <div className="flex flex-col">
+                        <h2 className="text-4xl font-black text-white leading-none tracking-tighter group-hover:text-blue-500 transition-colors duration-500 cursor-default uppercase">
+                          {person.name}
+                        </h2>
+                        {person.name.toLowerCase().includes("m fariz alfauzi") && (
+                          <span className="mono text-[10px] font-black text-blue-400 uppercase tracking-widest mt-1">Zent Tech.</span>
+                        )}
+                      </div>
                       <p className="text-slate-500 text-sm font-medium leading-relaxed italic max-w-xs pt-2 line-clamp-3">
                         "{person.bio}"
                       </p>
