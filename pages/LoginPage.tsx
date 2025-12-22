@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Lock, ShieldCheck, User as UserIcon, ArrowRight, Cpu, Key, GraduationCap, Briefcase, Terminal, CheckCircle2, Calendar, Venus, Mars } from 'lucide-react';
+import { Lock, ShieldCheck, User as UserIcon, ArrowRight, Cpu, Key, GraduationCap, Briefcase, Terminal, CheckCircle2, Calendar, Venus, Mars, Monitor } from 'lucide-react';
 import { useStore } from '../services/store';
 
 const LoginPage: React.FC = () => {
@@ -122,8 +122,10 @@ const LoginPage: React.FC = () => {
 
       <div className="w-full max-w-xl relative z-10">
         <div className="text-center mb-10">
-          <div className="inline-flex p-4 rounded-3xl bg-blue-600/10 mb-6 border border-blue-500/20 glow-blue">
-            <Cpu className="text-blue-500" size={42} />
+          <div className="inline-flex p-1 rounded-full bg-blue-600/5 mb-6 border border-white/10 glow-blue overflow-hidden w-32 h-32 md:w-40 md:h-40 transition-all hover:border-blue-500/30 flex items-center justify-center">
+             <div className="text-blue-500 drop-shadow-[0_0_15px_rgba(59,130,246,0.6)]">
+                <Monitor size={64} strokeWidth={2.5} className="md:size-20" />
+             </div>
           </div>
           <h1 className="text-4xl md:text-5xl font-black tracking-tighter text-white mb-2 uppercase italic">
             PORTAL <span className="text-blue-500">ACCESS</span>
@@ -153,7 +155,6 @@ const LoginPage: React.FC = () => {
               <div className="space-y-6 animate-in fade-in slide-in-from-bottom-6">
                 {/* IDENTITY FIELDS */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Name Input */}
                   <div className="md:col-span-2 relative group">
                     <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-blue-500 transition-colors">
                       <Terminal size={18} />
@@ -166,7 +167,6 @@ const LoginPage: React.FC = () => {
                     />
                   </div>
 
-                  {/* Age Input */}
                   <div className="relative group">
                     <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-blue-500 transition-colors">
                       <Calendar size={18} />
@@ -180,7 +180,6 @@ const LoginPage: React.FC = () => {
                     />
                   </div>
 
-                  {/* Class Input */}
                   <div className="relative group">
                     <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-blue-500 transition-colors">
                       <GraduationCap size={18} />
@@ -193,7 +192,6 @@ const LoginPage: React.FC = () => {
                     />
                   </div>
 
-                  {/* Major Input */}
                   <div className="md:col-span-2 relative group">
                     <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-blue-500 transition-colors">
                       <Briefcase size={18} />
@@ -207,7 +205,6 @@ const LoginPage: React.FC = () => {
                   </div>
                 </div>
 
-                {/* GENDER SELECTOR */}
                 <div className="space-y-3">
                   <label className="mono text-[9px] text-blue-500 font-black uppercase tracking-[0.4em] ml-1">Gender Identity</label>
                   <div className="flex gap-4">
@@ -234,7 +231,6 @@ const LoginPage: React.FC = () => {
                   </div>
                 </div>
 
-                {/* SLIDER COMPONENT */}
                 <div className="pt-6 border-t border-white/5">
                   <p className="text-center text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-6">Authorize via Slider Scan</p>
                   <div 
