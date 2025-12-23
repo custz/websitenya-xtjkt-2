@@ -1,8 +1,18 @@
 
 export type UserRole = 'user' | 'admin' | null;
 
+export interface LeaderboardEntry {
+  id: string;
+  name: string;
+  image: string;
+  score: number;
+  accuracy: number;
+  timestamp: string;
+}
+
 export interface Question {
   id: string;
+  type: 'pg';
   text: string;
   options: string[];
   correctAnswer: number;
@@ -204,6 +214,7 @@ export interface SiteData {
   menfess: Menfess[];
   quizQuestions: Question[];
   quizFeedbacks: QuizFeedback[];
+  quizLeaderboard: LeaderboardEntry[];
   groups: Group[];
   veliciaIntro: string;
   veliciaSidebarTitle: string;
