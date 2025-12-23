@@ -1,16 +1,17 @@
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   Heart, MessageSquare, Send, Trash2, ShieldCheck, User, 
   Sparkles, Globe, Plus, X, Reply, Image, Video, Loader2
 } from 'lucide-react';
 import { useStore } from '../services/store';
 import { Post, Comment, Reply as ReplyType } from '../types';
+import { PostSkeleton } from '../components/Skeleton';
 
-// Helper to compress status images
+// Helper to compress status images (optional optimization)
 const compressPostImage = (base64Str: string): Promise<string> => {
   return new Promise((resolve) => {
-    const img = new Image();
+    const img = new window.Image();
     img.src = base64Str;
     img.onload = () => {
       const canvas = document.createElement('canvas');
@@ -23,6 +24,7 @@ const compressPostImage = (base64Str: string): Promise<string> => {
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
       resolve(canvas.toDataURL('image/jpeg', 0.6)); // Balanced compression
     };
+    img.onerror = () => resolve(base64Str);
   });
 };
 
@@ -30,25 +32,30 @@ const MailBoxPage: React.FC = () => {
   const { data, updateData, userRole, userProfile } = useStore();
   const [isPosting, setIsPosting] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [pageLoading, setPageLoading] = useState(true);
   const [postType, setPostType] = useState<'text' | 'image' | 'video'>('text');
   const [caption, setCaption] = useState('');
   const [mediaUrl, setMediaUrl] = useState('');
   const [activeCommentPost, setActiveCommentPost] = useState<string | null>(null);
   const [commentText, setCommentText] = useState('');
-  const [replyTo, setReplyTo] = useState<{ postId: string, commentId: string } | null>(null);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setPageLoading(false), 1000);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 10 * 1024 * 1024) return alert("File terlalu besar! Maks 10MB.");
-      
+      // BATAS MB DIHAPUS (UNLIMITED)
       setIsProcessing(true);
       const reader = new FileReader();
       reader.onloadend = async () => {
         const base64 = reader.result as string;
         if (file.type.startsWith('image/')) {
+          // Kompresi ringan agar tidak membebani browser
           const compressed = await compressPostImage(base64);
           setMediaUrl(compressed);
           setPostType('image');
@@ -95,7 +102,7 @@ const MailBoxPage: React.FC = () => {
           likes: hasLiked ? post.likes - 1 : post.likes + 1,
           likedBy: hasLiked 
             ? post.likedBy.filter(n => n !== userProfile.name) 
-            : [...post.likedBy, userProfile.name]
+            : [...userProfile.name ? [userProfile.name] : [], ...post.likedBy]
         };
       }
       return post;
@@ -159,7 +166,7 @@ const MailBoxPage: React.FC = () => {
                        <button onClick={() => setMediaUrl('')} className="absolute top-4 right-4 p-2 bg-black/60 text-white rounded-full"><X size={16} /></button>
                     </div>
                   )}
-                  {isProcessing && <div className="flex items-center justify-center py-10 text-blue-500"><Loader2 className="animate-spin mr-3" /> Mengompresi Media...</div>}
+                  {isProcessing && <div className="flex items-center justify-center py-10 text-blue-500"><Loader2 className="animate-spin mr-3" /> Mengolah Media (Unlimited)...</div>}
                   <textarea className="w-full bg-slate-900/50 border border-white/5 rounded-3xl p-6 text-white outline-none focus:border-blue-500/50 h-32 resize-none" placeholder="Tulis caption..." value={caption} onChange={(e) => setCaption(e.target.value)} />
                   <div className="flex gap-4">
                     <button onClick={() => fileInputRef.current?.click()} className="flex-1 py-4 rounded-2xl bg-white/5 text-slate-400 font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2"><Image size={18} /> Upload Media</button>
@@ -172,61 +179,65 @@ const MailBoxPage: React.FC = () => {
         )}
 
         <div className="space-y-12">
-          {data.posts.map((post) => (
-            <article key={post.id} className="glass-card rounded-[3.5rem] border-white/5 overflow-hidden animate-in fade-in slide-in-from-bottom-8">
-               <div className="p-8 flex items-center justify-between border-b border-white/5">
-                  <div className="flex items-center gap-5">
-                     <div className="w-12 h-12 rounded-xl overflow-hidden border border-blue-500/30 glow-blue flex items-center justify-center bg-slate-800">
-                        {post.authorImage ? <img src={post.authorImage} className="w-full h-full object-cover" /> : <User size={20} className="text-slate-600" />}
-                     </div>
-                     <div className="flex flex-col">
-                        <span className="text-lg font-black text-white uppercase">{post.authorName}</span>
-                        <span className="mono text-[8px] font-bold text-slate-500 uppercase">{post.timestamp}</span>
-                     </div>
-                  </div>
-                  {userRole === 'admin' && (
-                    <button onClick={() => updateData({ posts: data.posts.filter(p => p.id !== post.id) })} className="p-3 text-slate-600 hover:text-red-500 transition-colors"><Trash2 size={20} /></button>
-                  )}
-               </div>
-               {post.contentUrl && (
-                 <div className="bg-black/20">
-                    {post.type === 'video' ? <video src={post.contentUrl} className="w-full max-h-[500px] object-contain" controls /> : <img src={post.contentUrl} className="w-full max-h-[500px] object-contain" />}
-                 </div>
-               )}
-               <div className="p-8 space-y-8">
-                  <p className="text-xl text-slate-300 font-medium italic border-l-4 border-blue-600/20 pl-6 leading-relaxed">"{post.caption}"</p>
-                  <div className="flex items-center gap-8 border-t border-white/5 pt-8">
-                    <button onClick={() => handleLike(post.id)} className={`flex items-center gap-3 ${post.likedBy.includes(userProfile.name) ? 'text-pink-500' : 'text-slate-500'}`}>
-                      <Heart size={20} fill={post.likedBy.includes(userProfile.name) ? "currentColor" : "none"} />
-                      <span className="mono text-[10px] font-black">{post.likes}</span>
-                    </button>
-                    <button onClick={() => setActiveCommentPost(activeCommentPost === post.id ? null : post.id)} className="flex items-center gap-3 text-slate-500">
-                      <MessageSquare size={20} />
-                      <span className="mono text-[10px] font-black">{post.comments.length}</span>
-                    </button>
-                  </div>
-                  {activeCommentPost === post.id && (
-                    <div className="space-y-6 pt-4">
-                      <div className="flex gap-4">
-                         <input className="flex-1 bg-slate-950 border border-white/5 rounded-2xl px-6 py-4 text-sm text-white focus:border-blue-500 outline-none" placeholder="Tulis komentar..." value={commentText} onChange={(e) => setCommentText(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleComment(post.id)} />
-                         <button onClick={() => handleComment(post.id)} className="p-4 bg-blue-600 text-white rounded-2xl"><Send size={18} /></button>
-                      </div>
-                      {post.comments.map(c => (
-                        <div key={c.id} className="flex gap-4 items-start">
-                          <div className="w-8 h-8 rounded-lg overflow-hidden border border-white/10 shrink-0">
-                            {c.userImage ? <img src={c.userImage} className="w-full h-full object-cover" /> : <User size={14} className="m-auto text-slate-700" />}
-                          </div>
-                          <div className="bg-white/5 p-4 rounded-2xl flex-1 border border-white/5">
-                            <div className="flex justify-between items-center mb-1"><span className="text-[10px] font-black text-white uppercase">{c.userName}</span></div>
-                            <p className="text-xs text-slate-400">{c.text}</p>
-                          </div>
-                        </div>
-                      ))}
+          {pageLoading ? (
+            Array(3).fill(0).map((_, i) => <PostSkeleton key={i} />)
+          ) : (
+            data.posts.map((post) => (
+              <article key={post.id} className="glass-card rounded-[3.5rem] border-white/5 overflow-hidden animate-in fade-in slide-in-from-bottom-8">
+                 <div className="p-8 flex items-center justify-between border-b border-white/5">
+                    <div className="flex items-center gap-5">
+                       <div className="w-12 h-12 rounded-xl overflow-hidden border border-blue-500/30 glow-blue flex items-center justify-center bg-slate-800">
+                          {post.authorImage ? <img src={post.authorImage} className="w-full h-full object-cover" /> : <User size={20} className="text-slate-600" />}
+                       </div>
+                       <div className="flex flex-col">
+                          <span className="text-lg font-black text-white uppercase">{post.authorName}</span>
+                          <span className="mono text-[8px] font-bold text-slate-500 uppercase">{post.timestamp}</span>
+                       </div>
                     </div>
-                  )}
-               </div>
-            </article>
-          ))}
+                    {userRole === 'admin' && (
+                      <button onClick={() => updateData({ posts: data.posts.filter(p => p.id !== post.id) })} className="p-3 text-slate-600 hover:text-red-500 transition-colors"><Trash2 size={20} /></button>
+                    )}
+                 </div>
+                 {post.contentUrl && (
+                   <div className="bg-black/20">
+                      {post.type === 'video' ? <video src={post.contentUrl} className="w-full max-h-[500px] object-contain" controls /> : <img src={post.contentUrl} className="w-full max-h-[500px] object-contain" />}
+                   </div>
+                 )}
+                 <div className="p-8 space-y-8">
+                    <p className="text-xl text-slate-300 font-medium italic border-l-4 border-blue-600/20 pl-6 leading-relaxed">"{post.caption}"</p>
+                    <div className="flex items-center gap-8 border-t border-white/5 pt-8">
+                      <button onClick={() => handleLike(post.id)} className={`flex items-center gap-3 ${post.likedBy.includes(userProfile.name) ? 'text-pink-500' : 'text-slate-500'}`}>
+                        <Heart size={20} fill={post.likedBy.includes(userProfile.name) ? "currentColor" : "none"} />
+                        <span className="mono text-[10px] font-black">{post.likes}</span>
+                      </button>
+                      <button onClick={() => setActiveCommentPost(activeCommentPost === post.id ? null : post.id)} className="flex items-center gap-3 text-slate-500">
+                        <MessageSquare size={20} />
+                        <span className="mono text-[10px] font-black">{post.comments.length}</span>
+                      </button>
+                    </div>
+                    {activeCommentPost === post.id && (
+                      <div className="space-y-6 pt-4">
+                        <div className="flex gap-4">
+                           <input className="flex-1 bg-slate-950 border border-white/5 rounded-2xl px-6 py-4 text-sm text-white focus:border-blue-500 outline-none" placeholder="Tulis komentar..." value={commentText} onChange={(e) => setCommentText(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleComment(post.id)} />
+                           <button onClick={() => handleComment(post.id)} className="p-4 bg-blue-600 text-white rounded-2xl"><Send size={18} /></button>
+                        </div>
+                        {post.comments.map(c => (
+                          <div key={c.id} className="flex gap-4 items-start">
+                            <div className="w-8 h-8 rounded-lg overflow-hidden border border-white/10 shrink-0">
+                              {c.userImage ? <img src={c.userImage} className="w-full h-full object-cover" /> : <User size={14} className="m-auto text-slate-700" />}
+                            </div>
+                            <div className="bg-white/5 p-4 rounded-2xl flex-1 border border-white/5">
+                              <div className="flex justify-between items-center mb-1"><span className="text-[10px] font-black text-white uppercase">{c.userName}</span></div>
+                              <p className="text-xs text-slate-400">{c.text}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                 </div>
+              </article>
+            ))
+          )}
         </div>
       </div>
     </div>
