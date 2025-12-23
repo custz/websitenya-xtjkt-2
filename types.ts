@@ -1,6 +1,54 @@
 
 export type UserRole = 'user' | 'admin' | null;
 
+export interface Question {
+  id: string;
+  text: string;
+  options: string[];
+  correctAnswer: number;
+  explanation: string;
+}
+
+export interface QuizFeedback {
+  id: string;
+  userName: string;
+  topic: string;
+  suggestion: string;
+  timestamp: string;
+}
+
+export interface LoginNotification {
+  id: string;
+  userName: string;
+  timestamp: string;
+  isRead: boolean;
+}
+
+export interface Task {
+  id: string;
+  title: string;
+  subject: string;
+  deadline: string;
+  status: 'active' | 'completed' | 'urgent';
+  description: string;
+}
+
+export interface Resource {
+  id: string;
+  title: string;
+  category: 'Cisco' | 'Mikrotik' | 'Linux' | 'Web' | 'Lainnya';
+  link: string;
+  iconType: string;
+}
+
+export interface MaintenanceLog {
+  id: string;
+  timestamp: string;
+  action: string;
+  statusBefore: string;
+  statusAfter: string;
+}
+
 export interface UserProfile {
   name: string;
   age: string;
@@ -18,7 +66,6 @@ export interface AdminProfile {
   verified: boolean;
 }
 
-// Fixed: Add missing Message interface for VeliciaPage.tsx
 export interface Message {
   role: 'user' | 'bot';
   content: string;
@@ -54,21 +101,22 @@ export interface Post {
   caption: string;
   timestamp: string;
   likes: number;
-  likedBy: string[]; // List of user names who liked
+  likedBy: string[];
   comments: Comment[];
   isAdmin: boolean;
 }
 
-export interface Mail {
+export interface Menfess {
   id: string;
-  sender: string;
-  senderImage?: string;
-  senderRole?: string;
-  subject: string;
-  content: string;
-  time: string;
-  isPriority: boolean;
-  isAdmin: boolean;
+  to: string;
+  from: string;
+  message: string;
+  song?: {
+    title: string;
+    artist: string;
+  };
+  timestamp: string;
+  color: string;
 }
 
 export interface Student {
@@ -78,6 +126,13 @@ export interface Student {
   bio: string;
   image: string;
   color: string;
+  isVerified?: boolean;
+}
+
+export interface Group {
+  id: string;
+  name: string;
+  members: Student[];
 }
 
 export interface GalleryItem {
@@ -110,6 +165,12 @@ export interface SiteData {
   heroDescription: string;
   heroImage: string;
   heroFloatingText: string;
+  globalAnnouncement: string;
+  systemStatus: 'Normal' | 'Maintenance' | 'Overload';
+  loginNotifications: LoginNotification[];
+  tasks: Task[];
+  resources: Resource[];
+  maintenanceLogs: MaintenanceLog[];
   stats: {
     students: string;
     subjects: string;
@@ -137,10 +198,13 @@ export interface SiteData {
   scheduleDescription: string;
   scheduleGeneralLabel: string;
   scheduleProductiveLabel: string;
-  mails: Mail[];
+  mails: any[];
   adminProfile: AdminProfile;
   posts: Post[];
-  // Fixed: Add missing Velicia-related fields for the AI Chat interface
+  menfess: Menfess[];
+  quizQuestions: Question[];
+  quizFeedbacks: QuizFeedback[];
+  groups: Group[];
   veliciaIntro: string;
   veliciaSidebarTitle: string;
   veliciaSidebarSubtitle: string;

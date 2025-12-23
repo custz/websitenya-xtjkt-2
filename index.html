@@ -11,19 +11,33 @@
         :root {
             --accent: #3b82f6;
             --accent-glow: rgba(59, 130, 246, 0.5);
-            --terminal-green: #10b981;
         }
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: #020205;
             color: #f8fafc;
             overflow-x: hidden;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .mono { font-family: 'JetBrains Mono', monospace; }
         .tech-font { font-family: 'Space Grotesk', sans-serif; }
         
+        /* State Visuals */
+        body.state-fixing { filter: sepia(0.3) saturate(1.2) hue-rotate(15deg); }
+        body.state-busy { filter: hue-rotate(-45deg) saturate(1.5); }
+        body.state-busy .glitch-overlay { display: block; }
+
+        .glitch-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background: repeating-linear-gradient(0deg, rgba(255,0,0,0.03) 0px, rgba(255,0,0,0.03) 1px, transparent 2px);
+            z-index: 9998;
+        }
+
         /* Efek Scanline CRT */
-        body::after {
+        .scanlines::after {
             content: " ";
             position: fixed;
             top: 0; left: 0; bottom: 0; right: 0;
@@ -31,9 +45,17 @@
             z-index: 9999;
             background-size: 100% 4px;
             pointer-events: none;
-            opacity: 0.2;
+            opacity: 0.15;
         }
-        
+
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            2% { transform: translate(-5px, 2px) skewX(10deg); }
+            4% { transform: translate(5px, -2px) skewY(-5deg); }
+            100% { transform: translate(0); }
+        }
+        .busy-text-glitch { animation: glitch 0.5s infinite linear alternate-reverse; }
+
         .glass-card {
             background: rgba(10, 10, 20, 0.7);
             backdrop-filter: blur(20px) saturate(180%);
@@ -46,6 +68,15 @@
             100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
         }
         .pulse-blue { animation: network-pulse 2s infinite; }
+
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+            display: inline-flex;
+            animation: marquee 30s linear infinite;
+        }
     </style>
 <script type="importmap">
 {
@@ -64,9 +95,9 @@
 </script>
 <link rel="stylesheet" href="/index.css">
 </head>
-<body>
+<body class="scanlines">
+    <div class="glitch-overlay"></div>
     <div id="root"></div>
-    <!-- Entry point utama untuk Vite -->
     <script type="module" src="/index.tsx"></script>
 </body>
 </html>
