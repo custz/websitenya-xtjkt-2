@@ -10,30 +10,40 @@ export default async function handler(request: Request) {
       request,
       onBeforeGenerateToken: async (pathname) => {
         /* 
-         * Di sini kamu bisa cek apakah user boleh upload atau tidak.
-         * Untuk sekarang, kita izinkan semua (public).
+         * Token generator untuk mengizinkan upload dari client.
+         * Di sini kita batasi tipe file yang boleh masuk.
          */
         return {
-          allowedContentTypes: ['image/jpeg', 'image/png', 'video/mp4', 'video/quicktime', 'image/gif'],
+          allowedContentTypes: [
+            'image/jpeg', 
+            'image/png', 
+            'image/gif', 
+            'video/mp4', 
+            'video/quicktime', 
+            'video/webm'
+          ],
           tokenPayload: JSON.stringify({
-            // Tambahkan info user jika perlu
+            // Bisa ditambahkan metadata tambahan di sini
           }),
         };
       },
       onUploadCompleted: async ({ blob, tokenPayload }) => {
-        console.log('Upload selesai!', blob.url);
+        // Logika setelah upload selesai (opsional)
+        console.log('Upload selesai di server:', blob.url);
       },
     });
 
-    return new Response(JSON.stringify(jsonResponse));
+    return new Response(JSON.stringify(jsonResponse), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' }
+    });
   } catch (error) {
     return new Response(
       JSON.stringify({ error: (error as Error).message }),
-      { status: 400 }
+      { 
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      }
     );
   }
 }
-
-export const config = {
-  runtime: 'edge',
-};
