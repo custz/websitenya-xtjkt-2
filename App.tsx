@@ -10,9 +10,19 @@ import SchedulePage from './pages/SchedulePage';
 import LoginPage from './pages/LoginPage';
 import ProfilePage from './pages/ProfilePage';
 import MailBoxPage from './pages/MailBoxPage';
+import { Loader2 } from 'lucide-react';
 
 const AppContent: React.FC = () => {
-  const { userRole } = useStore();
+  const { userRole, isLoading } = useStore();
+
+  if (isLoading) {
+    return (
+      <div className="fixed inset-0 bg-[#020205] flex flex-col items-center justify-center">
+        <Loader2 className="text-blue-500 animate-spin mb-4" size={40} />
+        <p className="mono text-[10px] text-slate-500 uppercase tracking-[0.5em]">Synchronizing Local Nodes...</p>
+      </div>
+    );
+  }
 
   if (!userRole) {
     return <LoginPage />;

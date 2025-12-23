@@ -4,68 +4,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>X TJKT 2 ELITE - Digital Portfolio</title>
+    <title>X TJKT 2 ELITE - Network Portfolio</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --accent: #3b82f6;
             --accent-glow: rgba(59, 130, 246, 0.5);
+            --terminal-green: #10b981;
         }
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #05050a;
+            background-color: #020205;
             color: #f8fafc;
             overflow-x: hidden;
         }
-        .mono {
-            font-family: 'JetBrains Mono', monospace;
-        }
-        /* Grain Overlay for Aesthetic Texture */
-        body::before {
-            content: "";
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .tech-font { font-family: 'Space Grotesk', sans-serif; }
+        
+        /* Efek Scanline CRT */
+        body::after {
+            content: " ";
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-image: url("https://grainy-gradients.vercel.app/noise.svg");
-            opacity: 0.04;
-            pointer-events: none;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.05) 50%);
             z-index: 9999;
-            filter: contrast(150%) brightness(100%);
+            background-size: 100% 4px;
+            pointer-events: none;
+            opacity: 0.2;
         }
-        .text-stroke {
-            -webkit-text-stroke: 1px rgba(255,255,255,0.2);
-            color: transparent;
-        }
-        .text-stroke-blue {
-            -webkit-text-stroke: 1px var(--accent);
-            color: transparent;
-        }
-        ::-webkit-scrollbar {
-            width: 5px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #05050a;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #1e293b;
-            border-radius: 10px;
-        }
-        @keyframes floating {
-            0% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(2deg); }
-            100% { transform: translateY(0px) rotate(0deg); }
-        }
-        .animate-aesthetic-float {
-            animation: floating 8s ease-in-out infinite;
-        }
+        
         .glass-card {
-            background: rgba(15, 15, 25, 0.7);
-            backdrop-filter: blur(20px) saturate(160%);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(10, 10, 20, 0.7);
+            backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
-        .glow-blue {
-            box-shadow: 0 0 40px -10px var(--accent-glow);
+
+        @keyframes network-pulse {
+            0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(59, 130, 246, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
         }
+        .pulse-blue { animation: network-pulse 2s infinite; }
     </style>
 <script type="importmap">
 {
@@ -75,7 +55,10 @@
     "react": "https://esm.sh/react@^19.2.3",
     "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
     "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
-    "@google/genai": "https://esm.sh/@google/genai@^1.34.0"
+    "@google/genai": "https://esm.sh/@google/genai@^1.34.0",
+    "@vercel/blob": "https://esm.sh/@vercel/blob@0.27.1",
+    "@vercel/blob/client": "https://esm.sh/@vercel/blob@0.27.1/client",
+    "@vercel/blob/": "https://esm.sh/@vercel/blob@^2.0.0/"
   }
 }
 </script>
