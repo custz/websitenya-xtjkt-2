@@ -1,6 +1,6 @@
 
 import React, { useRef, useState } from 'react';
-import { User, Camera, Briefcase, GraduationCap, Calendar, Info, Shield, Check, Settings, Fingerprint, Venus, Mars, ShieldAlert, Globe, Loader2, ShieldCheck, Zap, Terminal, Cpu } from 'lucide-react';
+import { User, Camera, Briefcase, GraduationCap, Calendar, Info, Shield, Check, Settings, Fingerprint, Venus, Mars, ShieldAlert, Globe, Loader2, ShieldCheck, Zap, Terminal, Cpu, LogOut } from 'lucide-react';
 import { useStore } from '../services/store';
 
 const compressImage = (base64Str: string): Promise<string> => {
@@ -22,7 +22,7 @@ const compressImage = (base64Str: string): Promise<string> => {
 };
 
 const ProfilePage: React.FC = () => {
-  const { userProfile, updateProfile, userRole, data, updateData } = useStore();
+  const { userProfile, updateProfile, userRole, data, updateData, logout } = useStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const adminFileRef = useRef<HTMLInputElement>(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -46,6 +46,12 @@ const ProfilePage: React.FC = () => {
         setIsProcessing(false);
       };
       reader.readAsDataURL(file);
+    }
+  };
+
+  const handleLogout = () => {
+    if (window.confirm("Beneran mau keluar dari sistem?")) {
+      logout();
     }
   };
 
@@ -152,6 +158,13 @@ const ProfilePage: React.FC = () => {
               </div>
             </div>
           </div>
+          
+          <button 
+            onClick={handleLogout}
+            className="mt-8 flex items-center gap-3 px-8 py-4 bg-red-600/10 hover:bg-red-600 hover:text-white text-red-500 rounded-2xl border border-red-500/20 font-black text-[10px] uppercase tracking-widest transition-all shadow-xl active:scale-95"
+          >
+            <LogOut size={16} /> Keluar Dari Sistem
+          </button>
         </div>
 
         {/* Form Area */}
