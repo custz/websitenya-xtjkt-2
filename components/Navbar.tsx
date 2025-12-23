@@ -5,12 +5,12 @@ import {
   Home, Users, ImageIcon, Calendar, Settings, 
   Mail, X, Monitor, Cpu, Radio, Zap, Cloud, Network,
   Megaphone, ShieldCheck, Bell, Clock, UserCheck, Activity, Construction, AlertTriangle, Database,
-  Instagram, Heart, Brain
+  Instagram, Heart, Brain, LogOut
 } from 'lucide-react';
 import { useStore } from '../services/store';
 
 const Navbar: React.FC = () => {
-  const { data, updateData, userRole, setEditMode, isEditMode } = useStore();
+  const { data, updateData, userRole, setEditMode, isEditMode, logout } = useStore();
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [isNotifOpen, setNotifOpen] = useState(false);
   
@@ -24,6 +24,12 @@ const Navbar: React.FC = () => {
   const clearNotifs = () => {
     updateData({ loginNotifications: [] });
     setNotifOpen(false);
+  };
+
+  const handleLogout = () => {
+    if (window.confirm("Putuskan koneksi Admin dan masuk mode penyamaran?")) {
+      logout();
+    }
   };
 
   const navItems = [
@@ -210,6 +216,13 @@ const Navbar: React.FC = () => {
                 >
                   <Settings size={16} />
                 </button>
+                <button 
+                  onClick={handleLogout}
+                  className="p-2 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-500/10 transition-all"
+                  title="Logout / Stealth Mode"
+                >
+                  <LogOut size={16} />
+                </button>
                 <select 
                   className={`bg-transparent text-[8px] font-black ${statusConfig.color} outline-none uppercase px-2`}
                   value={data.systemStatus}
@@ -249,12 +262,20 @@ const Navbar: React.FC = () => {
                <div className="pt-10 flex flex-col items-center gap-4">
                   <div className={`w-10 h-[1px] ${statusConfig.bg}/30`}></div>
                   <span className={`mono text-[10px] ${statusConfig.color} font-black uppercase tracking-widest`}>Area Admin</span>
-                  <button 
-                    onClick={() => { setEditMode(!isEditMode); setSidebarOpen(false); }}
-                    className={`px-8 py-3 ${statusConfig.bg} text-white rounded-full font-black text-[10px] uppercase`}
-                  >
-                    {isEditMode ? 'Off Mode Edit' : 'On Mode Edit'}
-                  </button>
+                  <div className="flex flex-col gap-3">
+                    <button 
+                      onClick={() => { setEditMode(!isEditMode); setSidebarOpen(false); }}
+                      className={`px-8 py-3 ${statusConfig.bg} text-white rounded-full font-black text-[10px] uppercase`}
+                    >
+                      {isEditMode ? 'Off Mode Edit' : 'On Mode Edit'}
+                    </button>
+                    <button 
+                      onClick={handleLogout}
+                      className="px-8 py-3 bg-red-600/20 text-red-500 border border-red-500/30 rounded-full font-black text-[10px] uppercase flex items-center justify-center gap-2"
+                    >
+                      <LogOut size={14} /> Stealth Mode (Logout)
+                    </button>
+                  </div>
                </div>
             )}
             <div className="mt-20">
