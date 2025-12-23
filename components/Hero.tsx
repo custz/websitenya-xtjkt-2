@@ -1,7 +1,7 @@
 
 import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Network, Upload, ImageIcon, Zap, Monitor } from 'lucide-react';
+import { ArrowRight, Network, Upload, ImageIcon, Zap, Monitor, Instagram } from 'lucide-react';
 import { useStore } from '../services/store';
 
 const Hero: React.FC = () => {
@@ -142,9 +142,19 @@ const Hero: React.FC = () => {
                 )}
               </div>
               
-              <div className="absolute -bottom-8 -left-8 glass-card px-8 py-6 rounded-3xl border-white/10 shadow-2xl animate-in slide-in-from-bottom-8 duration-1000 delay-1000">
-                <div className="mono text-[10px] text-blue-500 font-bold mb-1 tracking-widest uppercase">Lagi Rame</div>
-                <div className="text-2xl font-black text-white tracking-tighter uppercase">{data.brandName}</div>
+              <div className="absolute -bottom-8 -left-8 glass-card px-8 py-6 rounded-3xl border-white/10 shadow-2xl animate-in slide-in-from-bottom-8 duration-1000 delay-1000 flex items-center gap-6">
+                <div>
+                  <div className="mono text-[10px] text-blue-500 font-bold mb-1 tracking-widest uppercase">Lagi Rame</div>
+                  <div className="text-2xl font-black text-white tracking-tighter uppercase">{data.brandName}</div>
+                </div>
+                <a 
+                  href="https://www.instagram.com/teknisinya.tjktdua?igsh=bDF5MWV5djkxejc=" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="w-12 h-12 bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 rounded-2xl flex items-center justify-center text-white shadow-lg hover:scale-110 transition-transform"
+                >
+                  <Instagram size={24} />
+                </a>
               </div>
             </div>
           </div>
